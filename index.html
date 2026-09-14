@@ -192,6 +192,8 @@
         <div class="hint climate" id="climateNote"></div>
         <div class="ctl"><label for="albedo">Ground albedo</label><input type="range" id="albedo" min="0" max="0.9" step="0.05"><output id="albedoOut"></output></div>
         <div class="hint climate" id="albedoNote"></div>
+        <div class="ctl"><label for="pvDeg">Output fade</label>
+          <div class="row"><input type="number" id="pvDeg" min="0" max="5" step="0.05" style="width:80px"> % per year <span class="hint" id="pvDegNote"></span></div></div>
         </details>
         <div class="row">
       <button class="primary" id="optBtn">Set to optimal orientation</button>
@@ -253,14 +255,25 @@
                 <option data-cap="4096" data-unit="Wh" data-v="51.2" data-dod="0.9" data-eff="0.95" data-chg="3000" data-dis="3600">EcoFlow Delta Pro 3 · 4 kWh</option>
                 <option data-cap="6144" data-unit="Wh" data-v="51.2" data-dod="0.9" data-eff="0.95" data-chg="3000" data-dis="7200">EcoFlow Delta Pro Ultra, one pack · 6.1 kWh</option>
               </optgroup>
+              <!-- 12 V leisure batteries: discharge is the maker's BMS rating; charge is their stated limit where
+                   published, otherwise the usual 0.5C. -->
+              <optgroup label="Leisure and off-grid (12 V LiFePO₄)">
+                <option data-cap="105" data-unit="Ah" data-v="12.8" data-dod="0.9" data-eff="0.95" data-chg="670" data-dis="1280">Fogstar Drift 12V 105Ah · 1.3 kWh</option>
+                <option data-cap="230" data-unit="Ah" data-v="12.8" data-dod="0.9" data-eff="0.95" data-chg="1470" data-dis="3840">Fogstar Drift 12V 230Ah Gen2 · 2.9 kWh</option>
+                <option data-cap="100" data-unit="Ah" data-v="12.8" data-dod="0.9" data-eff="0.95" data-chg="1280" data-dis="1280">Eco-Worthy 12V 100Ah · 1.3 kWh</option>
+                <option data-cap="280" data-unit="Ah" data-v="12.8" data-dod="0.9" data-eff="0.95" data-chg="2048" data-dis="2560">Eco-Worthy 12V 280Ah · 3.6 kWh</option>
+              </optgroup>
               <optgroup label="Home, stackable modules">
                 <option data-cap="4800" data-unit="Wh" data-v="48" data-dod="0.9" data-eff="0.95" data-chg="3800" data-dis="3800">Pylontech US5000, per module · 4.8 kWh</option>
                 <option data-cap="5000" data-unit="Wh" data-v="48" data-dod="0.9" data-eff="0.95" data-chg="3840" data-dis="3840">Enphase IQ 5P, per unit · 5 kWh</option>
+                <option data-cap="5120" data-unit="Wh" data-v="51.2" data-dod="0.9" data-eff="0.95" data-chg="2560" data-dis="5120">Fogstar Energy, per module · 5.12 kWh</option>
+                <option data-cap="5120" data-unit="Wh" data-v="51.2" data-dod="0.9" data-eff="0.95" data-chg="5120" data-dis="5120">Eco-Worthy 48V rack, per module · 5.12 kWh</option>
                 <option data-cap="5000" data-unit="Wh" data-v="400" data-dod="0.9" data-eff="0.95" data-chg="2500" data-dis="2500">EcoFlow PowerOcean, per module · 5 kWh</option>
                 <option data-cap="5000" data-unit="Wh" data-v="400" data-dod="0.9" data-eff="0.95" data-chg="3000" data-dis="3000">Anker SOLIX X1, per module · 5 kWh</option>
                 <option data-cap="4960" data-unit="Wh" data-v="51.2" data-dod="0.9" data-eff="0.95" data-chg="3000" data-dis="3000">Bluetti EP600 B500, per module · 5 kWh</option>
                 <option data-cap="10200" data-unit="Wh" data-v="400" data-dod="0.9" data-eff="0.95" data-chg="10200" data-dis="10200">BYD Battery-Box HVS 10.2 · 10.2 kWh</option>
                 <option data-cap="13500" data-unit="Wh" data-v="400" data-dod="0.8" data-eff="0.92" data-chg="5000" data-dis="11500">Tesla Powerwall 3 · 13.5 kWh</option>
+                <option data-cap="15564.8" data-unit="Wh" data-v="51.2" data-dod="0.9" data-eff="0.95" data-chg="10240" data-dis="10240">Fogstar Energy wall mount · 15.5 kWh</option>
               </optgroup>
               <optgroup label="Car, vehicle-to-load">
                 <option data-cap="60000" data-unit="Wh" data-v="400" data-dod="0.8" data-eff="0.95" data-chg="7000" data-dis="3300">BYD Atto 3 · 60 kWh</option>
@@ -290,13 +303,20 @@
               <span class="dim">Do not include the inverter here if it is already in the performance ratio. Lithium cells 90–95 %, lead-acid about 80 %.</span></div></div>
           <output id="battEffOut"></output></div>
         <div class="pills" data-for="battEff"><button class="chip" data-v="0.7">NiMH 70 %</button><button class="chip" data-v="0.8">Lead-acid 80 %</button><button class="chip" data-v="0.92">Li-ion 92 %</button><button class="chip" data-v="0.95">LiFePO₄ 95 %</button></div>
+        <div class="ctl wide"><label for="battDeg">Capacity fade</label>
+          <div class="row"><input type="number" id="battDeg" min="0" max="10" step="0.1" style="width:80px"> % per year <span class="hint" id="battDegNote"></span></div></div>
         </details>
       </div>
       <div class="tiles">
         <div class="tile hero"><div class="label">Usable battery reserve</div><div class="value"><span id="simReserve">–</span><small id="simReserveU"></small></div><div class="hint" id="simAutonomy"></div></div>
       </div>
     </div>
-    <div style="margin-top:14px"><h3>State of charge through the year <span id="socNote" style="font-weight:400"></span></h3><div class="chartbox"><canvas id="simSoc"></canvas></div></div>
+    <div class="simcharts">
+      <div><h3>State of charge through the day (solar time)</h3>
+        <div class="chartbox"><canvas id="simSocDay"></canvas></div></div>
+      <div><h3>State of charge through the year <span id="socNote" style="font-weight:400"></span></h3>
+        <div class="chartbox"><canvas id="simSoc"></canvas></div></div>
+    </div>
   </section>
 
   <section class="card full collapsible" id="usageCard">
@@ -373,7 +393,7 @@
         <div class="ctl wide"><label for="gridCharge">Grid charging</label><div class="row"><label><input type="checkbox" id="gridCharge"> Charge the battery from the grid when the import price is at or below</label><input type="number" id="cheapBelow" min="0" step="0.5" style="width:80px"> <span class="sub">p</span>/kWh <span class="hint" id="gridNote"></span></div></div>
         <div class="ctl wide"><label for="standing">Standing charge</label><div class="row"><input type="number" id="standing" min="0" step="0.5" style="width:90px"> <span class="sub">p</span> per day <span class="hint">the fixed daily charge on the bill; import presets fill it in</span></div></div>
         <div class="ctl wide"><label for="inflation">Price inflation</label><div class="row"><input type="number" id="inflation" min="-10" max="30" step="0.5" style="width:80px"> % per year <span class="hint">applied to both import and export prices</span></div></div>
-        <div class="ctl wide"><label for="horizon">Horizon</label><div class="row"><input type="number" id="horizon" min="1" max="40" step="1" style="width:80px"> years <span class="hint">system life for the cash-flow chart; no replacement or degradation is modelled</span></div></div>
+        <div class="ctl wide"><label for="horizon">Horizon</label><div class="row"><input type="number" id="horizon" min="1" max="40" step="1" style="width:80px"> years <span class="hint">system life for the cash-flow chart; battery capacity fade and panel output fade are modelled, each under Advanced in its own section, but replacement is not</span></div></div>
       </details>
     </div>
     <div class="simcharts">
@@ -389,6 +409,7 @@
   'use strict';
   const DEG = Math.PI / 180;
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dayName = (n) => { const d = new Date(2025, 0, n); return d.getDate() + ' ' + MONTHS[d.getMonth()]; };   // day of the year, 1-based
   const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
   // ---------- state ----------
@@ -401,9 +422,9 @@
   ];
   // The draw profile is stored in watts (state.loadW) and edited in the unit the user picks (state.loadUnit).
   const LOAD_UNITS = [{ u: 'µW', f: 1e-6 }, { u: 'mW', f: 1e-3 }, { u: 'W', f: 1 }, { u: 'kW', f: 1e3 }, { u: 'MW', f: 1e6 }, { u: 'GW', f: 1e9 }];
-  const defaults = { lat: 55.676, lon: 12.568, tilt: 35, az: 180, kwp: 5, pr: 0.8, clear: 0.65, albedo: 0.2, layer: 'Map', clearAuto: true, climate: null, sizeUnit: 1,
+  const defaults = { lat: 55.676, lon: 12.568, tilt: 35, az: 180, kwp: 5, pr: 0.8, clear: 0.65, albedo: 0.2, pvDeg: 0.5, layer: 'Map', clearAuto: true, climate: null, sizeUnit: 1,
     loadW: [300, 250, 250, 250, 250, 300, 600, 800, 500, 400, 400, 450, 500, 400, 400, 450, 600, 1000, 1400, 1300, 1000, 700, 500, 350], loadUnit: 3,
-    noBatt: false, noSolar: false, battN: 1, battCap: 200, battCapUnit: 'Ah', battV: 48, dod: 0.8, battEff: 0.9,
+    noBatt: false, noSolar: false, battN: 1, battCap: 200, battCapUnit: 'Ah', battV: 48, dod: 0.8, battEff: 0.9, battDeg: 2,
     priceImp: new Array(24).fill(25), priceExp: new Array(24).fill(15), solarCost: null, battCost: null, battChargeW: null, battDischargeW: null,
     gridCharge: false, noExport: false, cheapBelow: 10, standing: 54, inflation: 3, horizon: 25, currency: 0 };
   let state = Object.assign({}, defaults);
@@ -428,10 +449,10 @@
     p.set('tilt', state.tilt); p.set('az', state.az);
     p.set('size', +(state.kwp / su.f).toPrecision(6) + su.u);
     p.set('eff', state.pr); p.set('clear', state.clear); if (!state.clearAuto) p.set('manual', '1');
-    p.set('alb', state.albedo); if (state.layer === 'Satellite') p.set('sat', '1');
+    p.set('alb', state.albedo); p.set('pdeg', state.pvDeg); if (state.layer === 'Satellite') p.set('sat', '1');
     p.set('draw', state.loadW.map((w) => +w.toPrecision(4)).join(',')); p.set('du', loadUnit().u.replace('µ', 'u'));
     p.set('batt', +state.battCap.toPrecision(5) + state.battCapUnit); p.set('v', state.battV); if (state.battN > 1) p.set('bn', state.battN); if (state.noBatt) p.set('nb', '1'); if (state.noSolar) p.set('ns', '1');
-    p.set('dod', state.dod); p.set('beff', state.battEff);
+    p.set('dod', state.dod); p.set('beff', state.battEff); p.set('deg', state.battDeg);
     p.set('pi', state.priceImp.map((v) => +v.toFixed(2)).join(',')); p.set('pe', state.priceExp.map((v) => +v.toFixed(2)).join(','));
     if (state.solarCost != null) p.set('sc', state.solarCost); if (state.battCost != null) p.set('bc', state.battCost); if (state.battChargeW != null) p.set('bcw', +state.battChargeW.toPrecision(5)); if (state.battDischargeW != null) p.set('bdw', +state.battDischargeW.toPrecision(5));
     if (state.gridCharge) p.set('gc', '1'); if (state.noExport) p.set('nx', '1'); p.set('cb', state.cheapBelow); p.set('st', state.standing); p.set('inf', state.inflation); p.set('yrs', state.horizon); if (state.currency) p.set('cur', state.currency);
@@ -446,14 +467,14 @@
     const size = (p.get('size') || '').match(/^([\d.]+)(Wp|kWp|MWp|GWp)$/);
     if (size) { state.sizeUnit = SIZE_UNITS.findIndex((u) => u.u === size[2]); state.kwp = parseFloat(size[1]) * sizeUnit().f; }
     set('pr', num('eff', 0.5, 1)); set('clear', num('clear', 0.3, 1)); state.clearAuto = !p.has('manual');
-    set('albedo', num('alb', 0, 0.9)); state.layer = 'Satellite';   // a link with a location opens on the satellite view, zoomed in on the pin
+    set('albedo', num('alb', 0, 0.9)); set('pvDeg', num('pdeg', 0, 5)); state.layer = 'Satellite';   // a link with a location opens on the satellite view, zoomed in on the pin
     const draw = (p.get('draw') || '').split(',').map(Number);
     if (draw.length === 24 && draw.every((v) => isFinite(v) && v >= 0)) state.loadW = draw;
     const du = LOAD_UNITS.findIndex((u) => u.u.replace('µ', 'u') === p.get('du')); if (du >= 0) state.loadUnit = du;
     state.battN = Math.max(1, Math.round(num('bn', 1, 1e6) || 1)); state.noBatt = p.has('nb'); state.noSolar = p.has('ns');
     const batt = (p.get('batt') || '').match(/^([\d.]+)(mAh|Ah|Wh)$/);
     if (batt) { state.battCap = parseFloat(batt[1]); state.battCapUnit = batt[2]; }
-    set('battV', num('v', 0.1, 1e6)); set('dod', num('dod', 0.2, 1)); set('battEff', num('beff', 0.5, 1));
+    set('battV', num('v', 0.1, 1e6)); set('dod', num('dod', 0.2, 1)); set('battEff', num('beff', 0.5, 1)); set('battDeg', num('deg', 0, 10));
     for (const [k, key] of [['pi', 'priceImp'], ['pe', 'priceExp']]) {
       const a = (p.get(k) || '').split(',').map(Number);
       if (a.length === 24 && a.every((v) => isFinite(v) && v >= 0)) state[key] = a;
@@ -795,8 +816,8 @@
     if (e.name === 'Satellite') labels.addTo(map); else map.removeLayer(labels);
   });
   const marker = L.marker([state.lat, state.lon], { draggable: true }).addTo(map);
-  marker.on('dragend', () => { const p = marker.getLatLng(); setLocation(p.lat, p.lng, false); });
-  map.on('click', (e) => setLocation(e.latlng.lat, e.latlng.lng, false));
+  marker.on('dragend', () => { const p = marker.getLatLng(); setLocation(p.lat, p.lng); });
+  map.on('click', (e) => setLocation(e.latlng.lat, e.latlng.lng));
   // Azimuth arrow anchored at the marker: fixed screen length, drag the tip to rotate.
   const ARROW_PX = 80;
   const arrowLine = L.polyline([], { color: css('--s1'), weight: 3, interactive: false }).addTo(map);
@@ -824,11 +845,13 @@
   });
   azTip.on('dragend', () => { draggingTip = false; drawArrow(); });
   map.on('zoom move zoomend moveend', drawArrow);
-  function setLocation(lat, lon, pan) {
+  // zoom: optional — when given, move the view in a single setView. (A panTo followed by a separate
+  // setZoom cancels the in-flight pan animation and leaves the map where it started.)
+  function setLocation(lat, lon, zoom) {
     lon = ((lon + 540) % 360) - 180;
     state.lat = lat; state.lon = lon; save();
     marker.setLatLng([lat, lon]);
-    if (pan) map.panTo([lat, lon]);
+    if (zoom != null) map.setView([lat, lon], zoom);
     recomputeGrid(); updateOutputs();
     fetchClimate();
   }
@@ -842,8 +865,10 @@
       const j = await r.json();
       if (!j.length) { $('status').textContent = 'No results for "' + q + '".'; return; }
       $('status').textContent = j[0].display_name;
-      setLocation(parseFloat(j[0].lat), parseFloat(j[0].lon), true);
-      map.setZoom(10);
+      const lat = parseFloat(j[0].lat), lon = parseFloat(j[0].lon);
+      const b = j[0].boundingbox;   // [south, north, west, east] — frame the whole place, but no closer than a street
+      if (b) { setLocation(lat, lon); map.fitBounds([[+b[0], +b[2]], [+b[1], +b[3]]], { maxZoom: 16 }); }
+      else setLocation(lat, lon, 13);
     } catch (e) { $('status').textContent = 'Search failed (network?).'; }
   }
   $('searchBtn').addEventListener('click', search);
@@ -863,9 +888,22 @@
     if (!navigator.geolocation) { $('status').textContent = 'Geolocation not available.'; return; }
     $('status').textContent = 'Locating…';
     navigator.geolocation.getCurrentPosition(
-      (p) => { $('status').textContent = 'Using your current position.'; setLocation(p.coords.latitude, p.coords.longitude, true); map.setZoom(11); },
+      (p) => { $('status').textContent = 'Using your current position.'; setLocation(p.coords.latitude, p.coords.longitude, 11); },
       () => { $('status').textContent = 'Could not get your position.'; });
   });
+
+  // Panels fade like the battery: only the cost section uses it, so the tiles above stay on this year's output.
+  let pvAnnual = 0;
+  function updatePvDegNote() {
+    if (document.activeElement !== $('pvDeg')) $('pvDeg').value = state.pvDeg;
+    const left = Math.pow(1 - state.pvDeg / 100, state.horizon), ai = unitIdx(pvAnnual * left);
+    $('pvDegNote').textContent = state.noSolar ? 'No panels in this scenario'
+      : !state.pvDeg ? 'No fade: the same output in year ' + state.horizon + ' as today'
+      : Math.round(left * 100) + ' % of today’s output after ' + state.horizon + ' years (' + fmtNum(pvAnnual * left / unitDiv(ai)) + ' ' + E_UNITS[ai] + '/yr)';
+  }
+  $('pvDeg').value = state.pvDeg;
+  // Fade changes nothing about this year, so only the cost section has to run again.
+  $('pvDeg').addEventListener('input', () => { state.pvDeg = Math.max(0, Math.min(5, parseFloat($('pvDeg').value) || 0)); save(); updatePvDegNote(); runCost(); });
 
   // ---------- charts ----------
   Chart.defaults.font.family = css('--sans');
@@ -1202,6 +1240,11 @@
     if (state.battCapUnit !== 'Wh') parts.push(fmtWh(ah * state.battV));
     $('battEquiv').textContent = (n > 1 ? 'each = ' : '= ') + parts.join(' · ') +
       (n > 1 ? ' · total ' + fmtWh(ah * n * state.battV) + ' (' + fmtNum(ah * n) + ' Ah)' : '');
+    if (document.activeElement !== $('battDeg')) $('battDeg').value = state.battDeg;
+    const left = Math.pow(1 - state.battDeg / 100, state.horizon);   // capacity still there at the end of the cost horizon
+    $('battDegNote').textContent = state.noBatt ? 'No battery in this scenario'
+      : !state.battDeg ? 'No fade: the same usable reserve in year ' + state.horizon + ' as today'
+      : Math.round(left * 100) + ' % of today’s capacity after ' + state.horizon + ' years (' + fmtWh(ah * n * state.battV * state.dod * left) + ' usable)';
     document.querySelectorAll('#vChips .chip').forEach((b) => b.classList.toggle('on', Math.abs(parseFloat(b.dataset.v) - state.battV) < 1e-9));
     // show the preset that matches the current battery, or the placeholder when it has been edited by hand
     const sel = $('battPreset'), near = (a, b) => Math.abs(a - b) < 1e-6;
@@ -1240,7 +1283,7 @@
     for (const id of ['dod', 'battEff']) { $(id).value = state[id]; $(id + 'Out').textContent = sliders[id].fmt(state[id]); }
     updatePills(); save(); runSim();
   });
-  $('battCap').value = state.battCap; $('battCapUnit').value = state.battCapUnit; $('battV').value = state.battV; $('battN').value = state.battN;
+  $('battCap').value = state.battCap; $('battCapUnit').value = state.battCapUnit; $('battV').value = state.battV; $('battN').value = state.battN; $('battDeg').value = state.battDeg;
   $('battCap').addEventListener('input', () => { state.battCap = Math.max(0, parseFloat($('battCap').value) || 0); save(); runSim(); });
   $('battN').addEventListener('input', () => { state.battN = Math.max(1, Math.round(parseFloat($('battN').value) || 1)); save(); runSim(); });
   $('battCapUnit').addEventListener('change', () => {   // convert so the physical battery stays the same
@@ -1249,6 +1292,8 @@
     $('battCap').value = state.battCap; save(); runSim();
   });
   $('battV').addEventListener('input', () => { const v = parseFloat($('battV').value); if (v > 0) { state.battV = v; save(); runSim(); } });
+  // Fade changes nothing about this year, so only the cost section has to run again.
+  $('battDeg').addEventListener('input', () => { state.battDeg = Math.max(0, Math.min(10, parseFloat($('battDeg').value) || 0)); save(); updateBattUI(); runCost(); });
   $('vChips').addEventListener('click', (e) => {
     const b = e.target.closest('.chip'); if (!b) return;
     state.battV = parseFloat(b.dataset.v); $('battV').value = state.battV; save(); runSim();
@@ -1312,6 +1357,25 @@
           afterBody: (items) => { const M = lastSim && lastSim.months[items[0].dataIndex]; return M ? ['Shortfall after battery: ' + fmtNum(M.short / lastSim.ed) + ' ' + simEUnit] : []; } } } },
       scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: gridColor }, border: { display: false }, title: { display: true, text: '' }, ticks: { callback: (v) => v.toLocaleString() } } } }
   });
+  // Both charge charts: a little room past 0 and 100 so a curve sitting on either is not clipped, with the
+  // labels pinned to whole tens (Chart.js would otherwise step from the padded minimum: -5, 5, 15 …).
+  const socY = () => ({ min: -5, max: 105, afterBuildTicks: (ax) => { ax.ticks = Array.from({ length: 11 }, (_, i) => ({ value: i * 10 })); },
+    grid: { color: gridColor }, border: { display: false }, title: { display: true, text: '% charged' } });
+  const simSocDay = new Chart($('simSocDay'), {
+    type: 'line',
+    data: { datasets: [
+      { label: 'Best day', data: [], borderColor: '#008300', backgroundColor: 'rgba(0,131,0,.12)', borderDash: [6, 4], fill: { target: 1 } },   // green wash down to the average
+      { label: 'Average day', data: [], borderColor: css('--text'), backgroundColor: css('--text'), borderWidth: 3, fill: false },
+      { label: 'Worst day', data: [], borderColor: '#e34948', backgroundColor: 'rgba(227,73,72,.14)', borderDash: [6, 4], fill: { target: 1 } },   // red wash up to the average
+    ] },
+    options: { responsive: true, maintainAspectRatio: false, animation: false, parsing: false, normalized: true,
+      elements: { line: { borderWidth: 2, tension: 0.3, borderJoinStyle: 'round' }, point: { radius: 0, hoverRadius: 5, hoverBorderWidth: 2, hoverBorderColor: css('--card') } },
+      interaction: { mode: 'index', intersect: false, axis: 'x' },
+      plugins: { legend: legendSolid,
+        tooltip: { callbacks: { labelColor: solidSwatch, title: (items) => hourLabel(items[0].parsed.x), label: (c) => ' ' + c.dataset.label + ': ' + Math.round(c.parsed.y) + ' %' } } },
+      scales: { x: { type: 'linear', min: 0, max: 24, grid: { display: false }, ticks: { stepSize: 3, callback: (v) => hourLabel(v) } },
+        y: socY() } }
+  });
   const simSoc = new Chart($('simSoc'), {
     type: 'line',
     data: { datasets: [
@@ -1325,7 +1389,7 @@
         title: (items) => { const dt = new Date(2025, 0, Math.round(items[0].parsed.x) + 1); return dt.getDate() + ' ' + MONTHS[dt.getMonth()]; },
         label: (c) => ' ' + c.dataset.label + ': ' + Math.round(c.parsed.y) + ' %' } } },
       scales: { x: { type: 'linear', min: 0, max: 365, grid: { display: false }, afterBuildTicks: (ax) => { ax.ticks = MONTH_STARTS.slice(0, 12).map((v) => ({ value: v })); }, ticks: { callback: (v) => MONTHS[MONTH_STARTS.indexOf(v)] || '' } },
-        y: { min: 0, max: 100, grid: { color: gridColor }, border: { display: false }, title: { display: true, text: '% charged' } } } }
+        y: socY() } }
   });
   let simEUnit = 'kWh', lastSim = null;
   function runSim() {
@@ -1357,29 +1421,53 @@
     simSoc.data.datasets[0].data = c.socMax.map((v, i) => ({ x: i, y: v * 100 }));
     simSoc.data.datasets[1].data = c.socMin.map((v, i) => ({ x: i, y: v * 100 }));
     simSoc.update();
+    drawSocDay(c.socHour);
     const grid = state.gridCharge && !state.noBatt && c.months.some((M) => M.gridKwh > 0);
     $('socNote').textContent = grid ? '(including grid charging in the cheap hours)' : '';
     document.querySelectorAll('#simTable td.soc').forEach((td, m) => { td.textContent = Math.round(c.months[m].minSoc * 100) + ' %'; });
+  }
+  // The day the battery coped with best and the day it was pushed hardest, ranked on the lowest charge the day
+  // reached and, when two days dip the same, on how full the battery was across the day.
+  function drawSocDay(days) {
+    if (!days || !days.length) return;
+    const avg = new Float64Array(25);
+    let best = 0, worst = 0, bestKey = -1, worstKey = Infinity;
+    days.forEach((d, i) => {
+      let low = 1, mean = 0;
+      for (let h = 0; h < 25; h++) { avg[h] += d[h] / days.length; mean += d[h] / 25; if (d[h] < low) low = d[h]; }
+      const key = low * 1e3 + mean;
+      if (key > bestKey) { bestKey = key; best = i; }
+      if (key < worstKey) { worstKey = key; worst = i; }
+    });
+    const pts = (d) => Array.from(d, (v, h) => ({ x: h, y: v * 100 }));
+    simSocDay.data.datasets[0].label = 'Best day (' + dayName(best + 1) + ')';
+    simSocDay.data.datasets[2].label = 'Worst day (' + dayName(worst + 1) + ')';
+    simSocDay.data.datasets[0].data = pts(days[best]);
+    simSocDay.data.datasets[1].data = pts(avg);
+    simSocDay.data.datasets[2].data = pts(days[worst]);
+    simSocDay.update();
   }
 
   // ---------- cost & return ----------
   function flat(p) { return new Array(24).fill(p); }
   function win(base, windows) { const a = flat(base); windows.forEach(([f, t, p]) => { for (let h = f; h < t; h++) a[h] = p; }); return a; }
-  const TARIFFS_IMP = [   // typical UK import tariffs, p/kWh by hour (approximate 2025 rates, solar time)
-    ['Flat (price cap)', flat(25), 54],
-    ['Economy 7', win(31, [[0, 7, 14]]), 60],
-    ['Octopus Go', win(27, [[1, 6, 8.5]]), 50],
-    ['Intelligent Octopus Go', win(27, [[0, 6, 7], [23, 24, 7]]), 50],
+  // Typical UK import tariffs, p/kWh by hour (autumn 2026 rates, averaged over the regions). The editor works in
+  // whole hours, so a window that starts or ends on the half hour is taken to the nearest hours that keep its length.
+  const TARIFFS_IMP = [
+    ['Flat (price cap)', flat(26), 55],
+    ['Economy 7', win(32, [[0, 7, 14.5]]), 55],                                   // seven night hours, commonly 00:30-07:30
+    ['Octopus Go', win(30, [[0, 5, 8.5]]), 50],                                   // 00:30-05:30
+    ['Intelligent Octopus Go', win(32, [[0, 5, 7.5], [23, 24, 7.5]]), 50],        // 23:30-05:30, plus smart charging slots that this cannot model
     ['Octopus Agile (typical day)', [15, 14, 13, 13, 13, 14, 17, 22, 24, 22, 20, 19, 19, 19, 20, 22, 33, 38, 36, 28, 24, 20, 18, 16], 50],
-    ['Cosy Octopus', win(27, [[4, 7, 12], [13, 16, 12], [22, 24, 12], [16, 19, 37]]), 50],
-    ['Octopus Flux import', win(22, [[2, 5, 15], [16, 19, 32]]), 50],
+    ['Cosy Octopus', win(33, [[4, 7, 14.5], [13, 16, 14.5], [22, 24, 14.5], [16, 19, 52]]), 50],
+    ['Octopus Flux import', win(26, [[2, 5, 16], [16, 19, 34]]), 50],
   ];
-  const TARIFFS_EXP = [   // typical UK export (SEG) tariffs
+  const TARIFFS_EXP = [   // typical UK export (SEG) tariffs, p/kWh (autumn 2026)
     ['Basic SEG', flat(4)],
-    ['Octopus Outgoing Fixed', flat(15)],
-    ['Octopus Outgoing Agile (typical day)', [8, 7, 7, 7, 7, 8, 10, 14, 15, 13, 12, 11, 11, 11, 12, 14, 24, 28, 26, 19, 15, 12, 10, 9]],
-    ['Octopus Flux export', win(19, [[2, 5, 8], [16, 19, 27]])],
-    ['Intelligent Octopus Flux export', flat(26)],
+    ['Octopus Outgoing Fixed', flat(12)],
+    ['Octopus Outgoing Agile (typical day)', [5.8, 5.1, 5.1, 5.1, 5.1, 5.8, 7.3, 10.2, 10.9, 9.5, 8.7, 8, 8, 8, 8.7, 10.2, 17.5, 20.4, 18.9, 13.8, 10.9, 8.7, 7.3, 6.6]],
+    ['Octopus Flux export', win(10, [[2, 5, 5], [16, 19, 29]])],
+    ['Intelligent Octopus Flux export', win(24, [[16, 19, 32]])],
     ['British Gas Export & Earn Plus', flat(15)],
     ['E.ON Next Export Exclusive', flat(16.5)],
   ];
@@ -1491,20 +1579,25 @@
   $('cheapBelow').addEventListener('input', () => { state.cheapBelow = Math.max(0, parseFloat($('cheapBelow').value) || 0); save(); runCost(); });
   $('standing').addEventListener('input', () => { state.standing = Math.max(0, parseFloat($('standing').value) || 0); save(); runCost(); });
   $('inflation').addEventListener('input', () => { state.inflation = Math.max(-10, Math.min(30, parseFloat($('inflation').value) || 0)); save(); runCost(); });
-  $('horizon').addEventListener('input', () => { state.horizon = Math.max(1, Math.min(40, Math.round(parseFloat($('horizon').value) || 25))); save(); runCost(); });
+  $('horizon').addEventListener('input', () => { state.horizon = Math.max(1, Math.min(40, Math.round(parseFloat($('horizon').value) || 25))); save(); updateBattUI(); updatePvDegNote(); runCost(); });   // both fade notes quote the horizon
 
   // Grid-connected money simulation, hour by hour over a year (second pass reported). Same battery model as the draw simulator.
-  function simulateCost() {
-    const load = state.loadW.map((w) => w / 1000), pv = hourlyPv();
-    const usable = capKwhTotal() * state.dod, eta = Math.sqrt(state.battEff), pc = chargeW() / 1000, pd = dischargeW() / 1000;   // all zero when there is no battery
+  // cap, pvf: fractions of the battery and of the panel output still there, so a later year can be run on a
+  // faded system (1 = new).
+  function simulateCost(cap, pvf) {
+    const load = state.loadW.map((w) => w / 1000), pv = hourlyPv(), pvMul = pvf == null ? 1 : pvf;
+    const usable = capKwhTotal() * state.dod * (cap == null ? 1 : cap), eta = Math.sqrt(state.battEff), pc = chargeW() / 1000, pd = dischargeW() / 1000;   // all zero when there is no battery
     const imp = state.priceImp.map((p) => p / 100), exp = state.priceExp.map((p) => state.noExport ? 0 : p / 100);   // no export: surplus earns nothing
     const months = Array.from({ length: 12 }, () => ({ base: 0, imp: 0, exp: 0, impKwh: 0, expKwh: 0, load: 0, pv: 0, stand: 0, dis: 0, gridKwh: 0, impLoad: 0, minSoc: 1 }));
-    const socMin = [], socMax = []; let e = usable;
+    const socMin = [], socMax = [], socHour = []; let e = usable;
+    const track = cap == null && pvf == null;   // only the new-system run feeds the charts, so only it keeps the hourly trace
     for (let year = 0; year < 2; year++) for (let n = 0; n < 365; n++) {
       const M = months[new Date(2025, 0, n + 1).getMonth()]; let dayMin = 1, dayMax = 0;
+      const trace = track && year === 1 ? new Float64Array(25) : null;   // charge at the start of the day, then after each hour
+      if (trace) trace[0] = usable > 0 ? e / usable : 0;
       if (year === 1) M.stand += state.standing / 100;   // standing charge, per day
       for (let h = 0; h < 24; h++) {
-        const p = pv[n][h], l = load[h], net = p - l; let importKwh = 0, exportKwh = 0, charged = 0, served = 0;
+        const p = pv[n][h] * pvMul, l = load[h], net = p - l; let importKwh = 0, exportKwh = 0, charged = 0, served = 0;
         const cheap = usable > 0 && state.gridCharge && state.priceImp[h] <= state.cheapBelow;   // a grid-charging hour
         if (net >= 0) { const stored = Math.min(net, (usable - e) / eta, pc); e += stored * eta; charged = stored; exportKwh = net - stored; }
         else if (cheap) importKwh = -net;   // cheap power: buy it for the load and keep the battery for the dear hours
@@ -1516,11 +1609,13 @@
         if (year === 1) {
           M.base += l * imp[h]; M.imp += importKwh * imp[h]; M.exp += exportKwh * exp[h]; M.impKwh += importKwh; M.expKwh += exportKwh; M.load += l; M.pv += p; M.dis += served; M.gridKwh += fromGrid; M.impLoad += importKwh - fromGrid;   // imported at the moment of use
           const frac = usable > 0 ? e / usable : 0; if (frac < dayMin) dayMin = frac; if (frac > dayMax) dayMax = frac;
+          if (trace) trace[h + 1] = frac;
         }
       }
       if (year === 1) { if (dayMin < M.minSoc) M.minSoc = dayMin; socMin.push(dayMin); socMax.push(dayMax); }
+      if (trace) socHour.push(trace);
     }
-    return { months, socMin, socMax };
+    return { months, socMin, socMax, socHour };
   }
   const costMonthly = new Chart($('costMonthly'), {
     type: 'line',
@@ -1556,15 +1651,29 @@
     const stand = sum(B, 'stand'), base = sum(B, 'base') + stand, billB = sum(B, 'imp') - sum(B, 'exp') + stand;
     const savB = base - billB, costB = solarCostVal() + battCostVal();
     const N = state.horizon, inf = state.inflation / 100;
-    const flow = (cost, sav) => { const out = [{ x: 0, y: -cost }]; let c = -cost; for (let y = 1; y <= N; y++) { c += sav * Math.pow(1 + inf, y - 1); out.push({ x: y, y: c }); } return out; };
-    const fB = flow(costB, savB);
+    // Fade: year 1 runs on a new system, every later year on a smaller battery and weaker panels, so its saving
+    // comes from its own run of the simulation. The bill without a system is unaffected.
+    const battFade = state.noBatt || capKwhTotal() <= 0 ? 0 : state.battDeg / 100;
+    const pvFade = state.noSolar || state.kwp <= 0 ? 0 : state.pvDeg / 100;
+    const savedYear = new Map([[1, savB]]);
+    const savIn = (y) => {
+      if (!savedYear.has(y)) {
+        const M = simulateCost(Math.pow(1 - battFade, y - 1), Math.pow(1 - pvFade, y - 1)).months;
+        savedYear.set(y, M.reduce((a, m) => a + m.base - m.imp + m.exp, 0));   // the standing charge is in both bills, so it cancels
+      }
+      return savedYear.get(y);
+    };
+    const fade = battFade > 0 || pvFade > 0;
+    const savFor = fade ? savIn : () => savB;
+    const flow = (cost, sav) => { const out = [{ x: 0, y: -cost }]; let c = -cost; for (let y = 1; y <= N; y++) { c += sav(y) * Math.pow(1 + inf, y - 1); out.push({ x: y, y: c }); } return out; };
+    const fB = flow(costB, savFor);
     const payback = (f) => { for (let i = 1; i < f.length; i++) if (f[i].y >= 0) { const a = f[i - 1].y, b = f[i].y; return f[i - 1].x + (b > a ? -a / (b - a) : 0); } return null; };
     const pbB = payback(fB);
     const loadK = sum(B, 'load'), pvK = sum(B, 'pv'), impK = sum(B, 'impKwh'), expK = sum(B, 'expKwh'), impLoadK = sum(B, 'impLoad');
     // the upgraded system is whatever is currently selected: panels, battery or both
     const hasS = !state.noSolar, hasB = !state.noBatt;
     const cfg = hasS && hasB ? 'solar + battery' : hasS ? 'solar only' : hasB ? 'battery only' : 'nothing', sysName = 'Upgraded system (' + cfg + ')';
-    $('cSaving').innerHTML = gbpHtml(savB); $('cSavingNote').textContent = 'With ' + cfg + ', against no system';
+    $('cSaving').innerHTML = gbpHtml(savB); $('cSavingNote').textContent = 'With ' + cfg + ', against no system' + (fade ? '; year one, before any fade' : '');
     const parts = []; if (hasS) parts.push('solar ' + gbp(solarCostVal())); if (hasB) parts.push('battery ' + gbp(battCostVal()));
     const manual = (hasS && state.solarCost != null) || (hasB && state.battCost != null);
     $('cCost').innerHTML = gbpHtml(costB); $('cCostNote').textContent = parts.length > 1 ? parts.join(' + ') : parts.length ? (manual ? 'Set under Advanced' : 'Typical UK installed price; set your quote under Advanced') : 'Nothing to install';
@@ -1582,10 +1691,13 @@
       for (let i = 0; i < 80; i++) { const mid = (lo + hi) / 2; if (npv(lo) * npv(mid) <= 0) hi = mid; else lo = mid; }
       return (lo + hi) / 2;
     };
-    const yearly = (cost, sav) => [{ x: 0, y0: -cost }].concat(Array.from({ length: N }, (_, i) => ({ x: i + 1, y0: sav * Math.pow(1 + inf, i) })));
-    const rB = costB > 0 ? irr(yearly(costB, savB)) : null, pct = (r) => r == null ? '–' : (r < 0 ? '−' : '') + fmtNum(Math.abs(r) * 100);
+    const yearly = (cost, sav) => [{ x: 0, y0: -cost }].concat(Array.from({ length: N }, (_, i) => ({ x: i + 1, y0: sav(i + 1) * Math.pow(1 + inf, i) })));
+    const rB = costB > 0 ? irr(yearly(costB, savFor)) : null, pct = (r) => r == null ? '–' : (r < 0 ? '−' : '') + fmtNum(Math.abs(r) * 100);
     $('cRoi').textContent = pct(rB); $('cRoiNote').textContent = 'Internal rate of return over ' + N + ' years';
-    $('cNet').innerHTML = gbpHtml(fB[N].y); $('cNetNote').textContent = sysName + ' over ' + N + ' years';
+    $('cNet').innerHTML = gbpHtml(fB[N].y); const fading = [];   // whichever of the two is actually fading
+    if (battFade > 0) fading.push('battery ' + fmtNum(state.battDeg) + ' %');
+    if (pvFade > 0) fading.push('panels ' + fmtNum(state.pvDeg) + ' %');
+    $('cNetNote').textContent = sysName + ' over ' + N + ' years' + (fading.length ? ', fading ' + fading.join(' and ') + ' a year' : '');
     costMonthly.data.datasets[0].data = B.map((M) => M.base + M.stand);
     costMonthly.data.datasets[1].data = B.map((M) => M.imp - M.exp + M.stand); costMonthly.data.datasets[1].label = sysName;
     costMonthly.update();
@@ -1607,6 +1719,7 @@
     const ai = unitIdx(sel * sys);
     $('tAnnual').textContent = fmtNum(sel * sys / unitDiv(ai));
     $('tAnnualU').textContent = E_UNITS[ai] + '/yr';
+    pvAnnual = sel * sys; updatePvDegNote();
     $('tYield').textContent = Math.round(sel * state.pr).toLocaleString();
     $('tShare').textContent = (sel / optAnnual * 100).toFixed(1);
     $('tOpt').textContent = opt.tilt + '° tilt, ' + opt.az + '° ' + compassName(opt.az);
@@ -1630,7 +1743,6 @@
       if (e > bestE) { bestE = e; best = { n, p }; }
       if (e < worstE) { worstE = e; worst = { n, p }; }
     }
-    const dayName = (n) => { const d = new Date(2025, 0, n); return d.getDate() + ' ' + MONTHS[d.getMonth()]; };
     daily.data.datasets[0].label = 'Best day (' + dayName(best.n) + ')';
     daily.data.datasets[2].label = 'Worst day (' + dayName(worst.n) + ')';
     const profiles = [best.p, avg, worst.p];
@@ -1666,7 +1778,7 @@
       collapsed[id] = !collapsed[id];
       try { localStorage.setItem('solar-collapsed', JSON.stringify(collapsed)); } catch (e) {}
       apply();
-      if (!collapsed[id]) { window.dispatchEvent(new Event('resize')); [monthly, daily, simMonthly, simSoc, costMonthly, costFlow].forEach((c) => c.resize()); }
+      if (!collapsed[id]) { window.dispatchEvent(new Event('resize')); [monthly, daily, simMonthly, simSoc, simSocDay, costMonthly, costFlow].forEach((c) => c.resize()); }
     });
   }
   // open the panel's Advanced section when it holds a non-default value, so a manual setting is never hidden

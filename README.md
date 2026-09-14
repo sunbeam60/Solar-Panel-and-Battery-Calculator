@@ -24,12 +24,14 @@ Pick the location, the angle and orientation of the solar panel.
 
 Using NASA sky clarity data and simulated sun position, the expected, unshaded output of the panels are shown. You can play with different orientations and angles to see the effect on the output.
 
+The "Advanced" section holds the performance ratio, sky clearness, ground albedo and "Output fade" — how much output the panels lose each year (0.5 % is NREL's field median); it weakens the panels year by year in the lifetime savings, payback and return.
+
 If you're only considering adding a battery to take advantage of cheap overnight or midday energy, click "No solar"
 
 ### Battery
 <img width="200" alt="image" src="https://github.com/user-attachments/assets/7ed2f369-11e7-4333-9685-d53a13a3f496" />
 
-Add some battery storage; there are a few presets for commonplace battery models, but if you can't find the one you're looking for, you can manually set battery size, limits, depth, efficiency in the "Advanced" section.
+Add some battery storage; there are a few presets for commonplace battery models, but if you can't find the one you're looking for, you can manually set battery size, limits, depth, efficiency in the "Advanced" section. "Capacity fade" there is how much usable capacity the battery loses each year (2 % is a typical figure for home LiFePO₄); it shrinks the battery year by year in the lifetime savings, payback and return. Two charts show how the battery behaves: the state of charge through a day — the best day, an average day and the worst day of the year — and the highest and lowest charge it reaches on every day of the year.
 
 ### Usage
 <img width="200" alt="image" src="https://github.com/user-attachments/assets/dbef74c7-ae7c-4e96-8856-986d64c3f687" />
