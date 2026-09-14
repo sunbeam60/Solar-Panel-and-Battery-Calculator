@@ -88,6 +88,7 @@
   #heat { width: 100%; display: block; cursor: crosshair; border-radius: 6px; }
   .sim { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr); gap: 16px; align-items: start; }
   .sim > .tiles { grid-column: 2; grid-row: 1; }
+  .sim > .adv { grid-column: 1 / -1; }   /* Advanced runs under both columns, so its long rows have room not to wrap */
   #loadPreset { width: 200px; max-width: 100%; }
   @media (max-width: 960px) { .sim { grid-template-columns: 1fr; } .sim > .tiles { grid-column: auto; grid-row: auto; } }
   .loadwrap { position: relative; margin: 6px 0 8px; }
