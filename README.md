@@ -49,6 +49,10 @@ The presets hold common (UK) flexible tariffs, but you can click and drag to set
 
 Many flexible tariffs pay you for exporting energy back to the grid. In some cases, this is a flat rate, in others a flexible rate. Like the cost, export pricing can be drawn manually if one of the supplied presets don't suit you.
 
+Turn on "Grid charging" under "Advanced" to buy cheap electricity for the battery. A dashed line appears across the import prices at the threshold, the hours at or below it turn blue, and the handle on the right of the line drags the threshold up and down.
+
+"Export limit" under "Advanced" caps how fast surplus can leave the property; anything above it is thrown away. The default is 3.68 kW, the most a single-phase UK connection may export under G98 without DNO approval. Set it to 0 for no limit.
+
 For deployable solar nodes, where you are simply modelling how the solar node will operate during the dark winter months) the Cost & Return section can simply be ignored.
 
 ## Need to share your calculation with someone else?
