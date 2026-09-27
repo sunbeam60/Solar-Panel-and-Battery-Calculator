@@ -273,6 +273,10 @@
                 <option data-cap="5000" data-unit="Wh" data-v="400" data-dod="0.9" data-eff="0.95" data-chg="2500" data-dis="2500">EcoFlow PowerOcean, per module · 5 kWh</option>
                 <option data-cap="5000" data-unit="Wh" data-v="400" data-dod="0.9" data-eff="0.95" data-chg="3000" data-dis="3000">Anker SOLIX X1, per module · 5 kWh</option>
                 <option data-cap="4960" data-unit="Wh" data-v="51.2" data-dod="0.9" data-eff="0.95" data-chg="3000" data-dis="3000">Bluetti EP600 B500, per module · 5 kWh</option>
+                <option data-cap="5120" data-unit="Wh" data-v="380" data-dod="0.95" data-eff="0.95" data-chg="5000" data-dis="5000">GoodWe ESA 5.1-BAT, per module · 5.1 kWh</option>
+                <option data-cap="6000" data-unit="Wh" data-v="380" data-dod="0.95" data-eff="0.95" data-chg="3000" data-dis="3000">GoodWe ESA 6.0-BAT, per module · 6 kWh</option>
+                <option data-cap="8320" data-unit="Wh" data-v="380" data-dod="0.95" data-eff="0.95" data-chg="8000" data-dis="8000">GoodWe ESA 8.3-BAT, per module · 8.3 kWh</option>
+                <option data-cap="9000" data-unit="Wh" data-v="380" data-dod="0.95" data-eff="0.95" data-chg="4500" data-dis="4500">GoodWe ESA 9.0-BAT, per module · 9 kWh</option>
                 <option data-cap="10200" data-unit="Wh" data-v="400" data-dod="0.9" data-eff="0.95" data-chg="10200" data-dis="10200">BYD Battery-Box HVS 10.2 · 10.2 kWh</option>
                 <option data-cap="13500" data-unit="Wh" data-v="400" data-dod="0.8" data-eff="0.92" data-chg="5000" data-dis="11500">Tesla Powerwall 3 · 13.5 kWh</option>
                 <option data-cap="15564.8" data-unit="Wh" data-v="51.2" data-dod="0.9" data-eff="0.95" data-chg="10240" data-dis="10240">Fogstar Energy wall mount · 15.5 kWh</option>
@@ -394,6 +398,7 @@
         <div class="ctl wide"><label for="solarCost">Solar cost</label><div class="row"><span class="cur">£</span> <input type="number" id="solarCost" min="0" step="100" style="width:110px"><span class="hint" id="solarCostNote"></span></div></div>
         <div class="ctl wide"><label for="battCost">Battery cost</label><div class="row"><span class="cur">£</span> <input type="number" id="battCost" min="0" step="100" style="width:110px"><span class="hint" id="battCostNote"></span></div></div>
         <div class="ctl wide"><label for="gridCharge">Grid charging</label><div class="row"><label><input type="checkbox" id="gridCharge"> Charge the battery from the grid when the import price is at or below</label><input type="number" id="cheapBelow" min="0" step="0.5" style="width:80px"> <span class="sub">p</span>/kWh <span class="hint" id="gridNote"></span></div></div>
+        <div class="ctl wide" id="gridSmartRow"><label></label><div class="row"><label title="In each cheap window, charge only as much as the battery needs, together with the coming solar, to last until the next cheap window. Assumes the day's solar and usage are known in advance."><input type="checkbox" id="gridSmart"> Only top up what the day ahead needs</label>, keeping at least <input type="number" id="gridSmartMin" min="0" max="50" step="1" style="width:60px" title="Safety margin: the planned lowest charge before the next cheap window, as a share of the usable battery"> % spare <span class="hint" id="gridSmartNote"></span></div></div>
         <div class="ctl wide"><label for="expLimit">Export limit</label><div class="row"><input type="number" id="expLimit" min="0" max="100" step="0.01" style="width:90px"> kW <span class="hint" id="expLimitNote"></span></div></div>
         <div class="ctl wide"><label for="standing">Standing charge</label><div class="row"><input type="number" id="standing" min="0" step="0.5" style="width:90px"> <span class="sub">p</span> per day <span class="hint">the fixed daily charge on the bill; import presets fill it in</span></div></div>
         <div class="ctl wide"><label for="inflation">Price inflation</label><div class="row"><input type="number" id="inflation" min="-10" max="30" step="0.5" style="width:80px"> % per year <span class="hint">applied to both import and export prices</span></div></div>
@@ -430,7 +435,7 @@
     loadW: [300, 250, 250, 250, 250, 300, 600, 800, 500, 400, 400, 450, 500, 400, 400, 450, 600, 1000, 1400, 1300, 1000, 700, 500, 350], loadUnit: 3,
     noBatt: false, noSolar: false, battN: 1, battCap: 200, battCapUnit: 'Ah', battV: 48, dod: 0.8, battEff: 0.9, battDeg: 2, battPick: '', loadPick: '',
     priceImp: new Array(24).fill(25), priceExp: new Array(24).fill(15), solarCost: null, battCost: null, battChargeW: null, battDischargeW: null,
-    gridCharge: false, noExport: false, expLimit: 3.68, cheapBelow: 10, standing: 54, impPick: '', expPick: '', inflation: 3, horizon: 25, currency: 0 };
+    gridCharge: false, gridSmart: false, gridSmartMin: 10, noExport: false, expLimit: 3.68, cheapBelow: 10, standing: 54, impPick: '', expPick: '', inflation: 3, horizon: 25, currency: 0 };
   let state = Object.assign({}, defaults);
   const sizeUnit = () => SIZE_UNITS[state.sizeUnit] || SIZE_UNITS[1];
   const loadUnit = () => LOAD_UNITS[state.loadUnit] || LOAD_UNITS[2];
@@ -459,7 +464,7 @@
     p.set('dod', state.dod); p.set('beff', state.battEff); p.set('deg', state.battDeg);
     p.set('pi', state.priceImp.map((v) => +v.toFixed(2)).join(',')); p.set('pe', state.priceExp.map((v) => +v.toFixed(2)).join(','));
     if (state.solarCost != null) p.set('sc', state.solarCost); if (state.battCost != null) p.set('bc', state.battCost); if (state.battChargeW != null) p.set('bcw', +state.battChargeW.toPrecision(5)); if (state.battDischargeW != null) p.set('bdw', +state.battDischargeW.toPrecision(5));
-    if (state.gridCharge) p.set('gc', '1'); if (state.noExport) p.set('nx', '1'); p.set('xl', state.expLimit); p.set('cb', state.cheapBelow); p.set('st', state.standing); p.set('inf', state.inflation); p.set('yrs', state.horizon); if (state.currency) p.set('cur', state.currency);
+    if (state.gridCharge) p.set('gc', '1'); if (state.gridSmart) { p.set('gs', '1'); p.set('gm', state.gridSmartMin); } if (state.noExport) p.set('nx', '1'); p.set('xl', state.expLimit); p.set('cb', state.cheapBelow); p.set('st', state.standing); p.set('inf', state.inflation); p.set('yrs', state.horizon); if (state.currency) p.set('cur', state.currency);
     return p.toString();
   }
   function fromQuery(qs) {
@@ -485,7 +490,7 @@
     }
     if (p.has('sc')) set('solarCost', num('sc', 0, 1e12)); if (p.has('bc')) set('battCost', num('bc', 0, 1e12)); if (p.has('bp')) { const w = num('bp', 0, 1e9) * 1000; state.battChargeW = w; state.battDischargeW = w; }
     if (p.has('bcw')) set('battChargeW', num('bcw', 0, 1e12)); if (p.has('bdw')) set('battDischargeW', num('bdw', 0, 1e12));
-    state.gridCharge = p.has('gc'); state.noExport = p.has('nx'); set('expLimit', num('xl', 0, 100)); set('cheapBelow', num('cb', 0, 1e4)); set('standing', num('st', 0, 1e5)); set('inflation', num('inf', -10, 30)); set('horizon', num('yrs', 1, 40)); set('currency', num('cur', 0, 3));
+    state.gridCharge = p.has('gc'); state.gridSmart = p.has('gs'); set('gridSmartMin', num('gm', 0, 50)); state.noExport = p.has('nx'); set('expLimit', num('xl', 0, 100)); set('cheapBelow', num('cb', 0, 1e4)); set('standing', num('st', 0, 1e5)); set('inflation', num('inf', -10, 30)); set('horizon', num('yrs', 1, 40)); set('currency', num('cur', 0, 3));
     state.battPick = state.loadPick = state.impPick = state.expPick = '';   // a link carries values, never the presets they may have come from
     return true;
   }
@@ -1639,8 +1644,9 @@
     if (state.noBatt) $('battCostNote').textContent = 'No battery in this scenario';
     $('solarCost').disabled = !!state.noSolar; $('battCost').disabled = !!state.noBatt;
     $('gridCharge').checked = !!state.gridCharge;
+    $('gridSmart').checked = !!state.gridSmart; $('gridSmartRow').style.opacity = state.gridCharge ? '' : '.5';
     $('noExport').checked = !!state.noExport; $('expBlock').classList.toggle('off', !!state.noExport);
-    for (const id of ['cheapBelow', 'standing', 'inflation', 'horizon', 'expLimit']) if (document.activeElement !== $(id)) $(id).value = state[id];
+    for (const id of ['cheapBelow', 'standing', 'inflation', 'horizon', 'expLimit', 'gridSmartMin']) if (document.activeElement !== $(id)) $(id).value = state[id];
     $('expLimitNote').textContent = state.noExport ? 'Nothing is exported in this scenario' : !state.expLimit ? 'No limit' : '';
   }
   document.addEventListener('click', (e) => { const a = e.target.closest('.costReset'); if (!a) return; state[a.dataset.key] = null; save(); runCost(); });
@@ -1650,6 +1656,8 @@
   $('expLimit').addEventListener('input', () => { state.expLimit = Math.max(0, Math.min(100, parseFloat($('expLimit').value) || 0)); save(); runCost(); });
   $('cheapBelow').addEventListener('input', () => { state.cheapBelow = Math.max(0, parseFloat($('cheapBelow').value) || 0); save(); runCost(); impEd.draw(); });
   $('standing').addEventListener('input', () => { state.standing = Math.max(0, parseFloat($('standing').value) || 0); state.impPick = 'manual'; save(); runCost(); impCtl.refresh(); });   // import presets set this too
+  $('gridSmart').addEventListener('change', () => { state.gridSmart = $('gridSmart').checked; save(); runCost(); });
+  $('gridSmartMin').addEventListener('input', () => { state.gridSmartMin = Math.max(0, Math.min(50, parseFloat($('gridSmartMin').value) || 0)); save(); runCost(); });
   $('inflation').addEventListener('input', () => { state.inflation = Math.max(-10, Math.min(30, parseFloat($('inflation').value) || 0)); save(); runCost(); });
   $('horizon').addEventListener('input', () => { state.horizon = Math.max(1, Math.min(40, Math.round(parseFloat($('horizon').value) || 25))); save(); updateBattUI(); updatePvDegNote(); runCost(); });   // both fade notes quote the horizon
 
@@ -1666,6 +1674,19 @@
     const months = Array.from({ length: 12 }, () => ({ base: 0, imp: 0, exp: 0, impKwh: 0, expKwh: 0, curtKwh: 0, load: 0, pv: 0, stand: 0, dis: 0, gridKwh: 0, impLoad: 0, minSoc: 1 }));
     const socMin = [], socMax = [], socHour = []; let e = usable;
     const track = cap == null && pvf == null;   // only the new-system run feeds the charts, so only it keeps the hourly trace
+    const cheapH = state.priceImp.map((pr) => pr <= state.cheapBelow);
+    // Smart grid charging: after the cheap run that hour h belongs to, walk forward to the next cheap hour and find, by
+    // bisection, the least stored energy that never runs out on the way (solar refills count, capped at a full battery).
+    function needAfter(n, h) {
+      const steps = []; let k = h + 1;
+      while (k < h + 24 && cheapH[k % 24]) k++;
+      for (; k < h + 25 && !cheapH[k % 24]; k++) { const hh = k % 24; steps.push(pv[(n + Math.floor(k / 24)) % 365][hh] * pvMul - load[hh]); }
+      const spare = usable * state.gridSmartMin / 100;   // planned lowest charge, so the forecast has some slack
+      const lasts = (e0) => { let x = e0; for (const net of steps) { if (net >= 0) x = Math.min(usable, x + Math.min(net, pc) * eta); else { x -= Math.min(-net / eta, pd); if (x < spare - 1e-9) return false; } } return true; };
+      if (lasts(0)) return 0; if (!lasts(usable)) return usable;
+      let lo = 0, hi = usable; for (let i = 0; i < 24; i++) { const mid = (lo + hi) / 2; if (lasts(mid)) hi = mid; else lo = mid; }
+      return hi;
+    }
     for (let year = 0; year < 2; year++) for (let n = 0; n < 365; n++) {
       const M = months[new Date(2025, 0, n + 1).getMonth()]; let dayMin = 1, dayMax = 0;
       const trace = track && year === 1 ? new Float64Array(25) : null;   // charge at the start of the day, then after each hour
@@ -1682,7 +1703,8 @@
         else { const need = -net, take = Math.min(need / eta, e, pd); e -= take; served = take * eta; importKwh = need - served; }
         let fromGrid = 0;
         if (cheap && e < usable) {
-          fromGrid = Math.min((usable - e) / eta, Math.max(0, pc - charged)); e += fromGrid * eta; importKwh += fromGrid;
+          const target = state.gridSmart ? needAfter(n, h) : usable;   // smart: only what the day ahead needs; otherwise fill up
+          if (e < target) { fromGrid = Math.min((target - e) / eta, Math.max(0, pc - charged)); e += fromGrid * eta; importKwh += fromGrid; }
         }
         if (year === 1) {
           M.base += l * imp[h]; M.imp += importKwh * imp[h]; M.exp += exportKwh * exp[h]; M.impKwh += importKwh; M.expKwh += exportKwh; M.curtKwh += curtKwh; M.load += l; M.pv += p; M.dis += served; M.gridKwh += fromGrid; M.impLoad += importKwh - fromGrid;   // imported at the moment of use
@@ -1747,6 +1769,10 @@
     const fB = flow(costB, savFor);
     const payback = (f) => { for (let i = 1; i < f.length; i++) if (f[i].y >= 0) { const a = f[i - 1].y, b = f[i].y; return f[i - 1].x + (b > a ? -a / (b - a) : 0); } return null; };
     const pbB = payback(fB);
+    // topping up only what is needed leaves room for solar; that loses money when export pays more than cheap grid energy after battery losses
+    const cheapMax = cheap.length ? Math.max(...cheap.map((h) => state.priceImp[h])) : 0, exportBeats = !state.noExport && cheap.length && mean(state.priceExp) > cheapMax / state.battEff;
+    $('gridSmartNote').textContent = state.gridCharge && !state.noBatt ? 'Grid charging: ' + fmtNum(sum(B, 'gridKwh')) + ' kWh per year' +
+      (state.gridSmart && exportBeats ? '. Your export price beats the cheap import, so filling up and exporting the solar may pay more.' : '') : '';
     const loadK = sum(B, 'load'), pvK = sum(B, 'pv'), impK = sum(B, 'impKwh'), expK = sum(B, 'expKwh'), impLoadK = sum(B, 'impLoad'), curtK = sum(B, 'curtKwh');
     // the upgraded system is whatever is currently selected: panels, battery or both
     const hasS = !state.noSolar, hasB = !state.noBatt;
