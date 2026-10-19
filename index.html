@@ -64,7 +64,11 @@
   .slwrap { position: relative; }
   .pop { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); width: 300px; max-width: 90vw; background: var(--text); color: #fff; padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.4; z-index: 1100; box-shadow: 0 4px 14px rgba(0,0,0,.25); display: none; }
   .pop::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border: 6px solid transparent; border-top-color: var(--text); }
-  .slwrap:hover .pop, .slwrap:focus-within .pop { display: block; }
+  .pophost { position: relative; display: inline-block; }
+  .pophost > label { cursor: help; text-decoration: underline dotted var(--muted); text-underline-offset: 3px; }
+  .pophost > .pop { left: 0; transform: none; }
+  .pophost > .pop::after { left: 24px; margin-left: 0; }
+  .pophost:hover > .pop, .ctl:focus-within > .pophost > .pop { display: block; }   /* hover the label, or focus anything in the row */
   .pop b { font-weight: 650; }
   .pop .dim { color: #c3c2b7; }
   .pop .bars { display: flex; gap: 2px; align-items: flex-end; height: 26px; margin: 6px 0 2px; }
@@ -173,27 +177,25 @@
     </div>
     <div class="solar">
       <div>
-        <div class="ctl"><label for="tilt">Tilt</label><input type="range" id="tilt" min="0" max="90" step="1"><output id="tiltOut"></output></div>
-        <div class="ctl"><label for="az">Direction (azimuth)</label><input type="range" id="az" min="0" max="359" step="1"><output id="azOut"></output></div>
-        <div class="ctl size"><label for="kwp">System size</label><input type="range" id="kwp" min="1" max="20" step="0.5">
+        <div class="ctl"><span class="pophost"><label for="tilt">Tilt</label><div class="pop" id="tiltPop" role="tooltip"><b>Tilt</b><br>Angle of the panels from horizontal: 0° lies flat, 90° stands vertical. Steeper favours the low winter sun and sheds snow and dirt; shallower catches more in summer. Most UK pitched roofs are 30–45°.</div></span><input type="range" id="tilt" min="0" max="90" step="1"><output id="tiltOut"></output></div>
+        <div class="ctl"><span class="pophost"><label for="az">Direction (azimuth)</label><div class="pop" id="azPop" role="tooltip"><b>Direction (azimuth)</b><br>The compass direction the panels face. 180° is due south, which collects the most over a year in the northern hemisphere. Turning east or west shifts output towards morning or evening, which can suit your own usage better even though the annual total drops.</div></span><input type="range" id="az" min="0" max="359" step="1"><output id="azOut"></output></div>
+        <div class="ctl size"><span class="pophost"><label for="kwp">System size</label><div class="pop" id="kwpPop" role="tooltip"><b>System size</b><br>Peak rating of the array: the figure on the panel label times the number of panels, measured under standard test conditions. A typical UK home fits 3–6 kWp, and each kWp needs roughly 5 m² of roof.</div></span><input type="range" id="kwp" min="1" max="20" step="0.5">
       <span class="sizeVal"><input type="number" id="kwpIn" min="0" step="any" title="Type an exact system size; the slider moves in coarser steps"><span id="kwpUnit" class="unit-cycle" title="Click to change unit (Wp, kWp, MWp, GWp)"></span></span></div>
         <details class="adv" id="advPanel"><summary>Advanced</summary>
-        <div class="ctl"><label for="pr">Performance ratio</label>
-      <div class="slwrap"><input type="range" id="pr" min="0.5" max="1" step="0.01" aria-describedby="prPop">
-        <div class="pop" id="prPop" role="tooltip"><b>Performance ratio</b><br>Share of the panels' rated output that reaches the load on the direct path. Covers inverter or charge-controller conversion, cells running hotter than 25 °C, wiring and mismatch, dirt and shading.
-          <span class="dim">Not cell efficiency: that is already inside the kWp rating. Real systems land at 75–85 %; PVGIS assumes 86 %.</span></div></div>
+        <div class="ctl"><span class="pophost"><label for="pr">Performance ratio</label><div class="pop" id="prPop" role="tooltip"><b>Performance ratio</b><br>Share of the panels' rated output that reaches the load on the direct path. Covers inverter or charge-controller conversion, cells running hotter than 25 °C, wiring and mismatch, dirt and shading.
+          <span class="dim">Not cell efficiency: that is already inside the kWp rating. Real systems land at 75–85 %; PVGIS assumes 86 %.</span></div></span>
+      <div class="slwrap"><input type="range" id="pr" min="0.5" max="1" step="0.01" aria-describedby="prPop"></div>
       <output id="prOut"></output></div>
         <div class="hint climate" id="prNote"></div>
-        <div class="ctl"><label for="clear">Sky clearness</label>
+        <div class="ctl"><span class="pophost"><label for="clear">Sky clearness</label><div class="pop" id="clearPop" role="tooltip"></div></span>
       <div class="slwrap">
         <input type="range" id="clear" min="0.3" max="1" step="0.01" aria-describedby="clearPop">
-        <div class="pop" id="clearPop" role="tooltip"></div>
       </div>
       <output id="clearOut"></output></div>
         <div class="hint climate" id="climateNote"></div>
-        <div class="ctl"><label for="albedo">Ground albedo</label><input type="range" id="albedo" min="0" max="0.9" step="0.05"><output id="albedoOut"></output></div>
+        <div class="ctl"><span class="pophost"><label for="albedo">Ground albedo</label><div class="pop" id="albedoPop" role="tooltip"><b>Ground albedo</b><br>How much light the ground bounces back up onto the panels. Grass and tarmac 0.1–0.2, concrete about 0.3, fresh snow 0.7 or more. It only matters for steeply tilted panels, which can see the ground at all.</div></span><input type="range" id="albedo" min="0" max="0.9" step="0.05"><output id="albedoOut"></output></div>
         <div class="hint climate" id="albedoNote"></div>
-        <div class="ctl"><label for="pvDeg">Output fade</label>
+        <div class="ctl"><span class="pophost"><label for="pvDeg">Output fade</label><div class="pop" id="pvDegPop" role="tooltip"><b>Output fade</b><br>Output the panels lose each year, compounding. NREL's field median is 0.5 % and 25-year warranties promise 80 % of the original output, about 0.9 %. Most of the first year's settling is already in the panel's rating. Only the cost section uses it; 0 turns it off.</div></span>
           <div class="row"><input type="number" id="pvDeg" min="0" max="5" step="0.05" style="width:80px"> % per year <span class="hint" id="pvDegNote"></span></div></div>
         </details>
         <div class="row">
@@ -237,7 +239,7 @@
     <p class="hint" style="margin:0 0 10px">Pick a battery or describe one. The reserve and the state of charge through the year follow from the panels above and the usage below.</p>
     <div class="sim">
       <div class="battery">
-        <div class="ctl wide"><label for="battPreset">Battery</label>
+        <div class="ctl wide"><span class="pophost"><label for="battPreset">Battery</label><div class="pop" id="battPresetPop" role="tooltip"><b>Battery</b><br>Pick a known battery to fill in capacity, voltage, usable depth, efficiency and the charge and discharge limits. The box to its left is how many identical units you have. Change any of those values by hand and the list says Manual.</div></span>
           <div class="row"><input type="number" id="battN" min="1" step="1" style="width:56px" title="Number of identical modules or cells in parallel"> ×
             <select id="battPreset" title="Sets capacity, voltage, usable depth, round-trip efficiency and charge/discharge limits for a known battery">
               <option value="">Preset…</option>
@@ -277,6 +279,10 @@
                 <option data-cap="6000" data-unit="Wh" data-v="380" data-dod="0.95" data-eff="0.95" data-chg="3000" data-dis="3000">GoodWe ESA 6.0-BAT, per module · 6 kWh</option>
                 <option data-cap="8320" data-unit="Wh" data-v="380" data-dod="0.95" data-eff="0.95" data-chg="8000" data-dis="8000">GoodWe ESA 8.3-BAT, per module · 8.3 kWh</option>
                 <option data-cap="9000" data-unit="Wh" data-v="380" data-dod="0.95" data-eff="0.95" data-chg="4500" data-dis="4500">GoodWe ESA 9.0-BAT, per module · 9 kWh</option>
+                <option data-cap="5380" data-unit="Wh" data-v="400" data-dod="0.95" data-eff="0.95" data-chg="2500" data-dis="2500">SigenStor BAT 5.0, per module · 5.4 kWh</option>
+                <option data-cap="6020" data-unit="Wh" data-v="400" data-dod="0.95" data-eff="0.95" data-chg="3000" data-dis="3000">SigenStor BAT 6.0, per module · 6 kWh</option>
+                <option data-cap="8060" data-unit="Wh" data-v="400" data-dod="0.95" data-eff="0.95" data-chg="4000" data-dis="4000">SigenStor BAT 8.0, per module · 8.1 kWh</option>
+                <option data-cap="9040" data-unit="Wh" data-v="400" data-dod="0.95" data-eff="0.95" data-chg="4600" data-dis="4600">SigenStor BAT 10.0, per module · 9 kWh</option>
                 <option data-cap="10200" data-unit="Wh" data-v="400" data-dod="0.9" data-eff="0.95" data-chg="10200" data-dis="10200">BYD Battery-Box HVS 10.2 · 10.2 kWh</option>
                 <option data-cap="13500" data-unit="Wh" data-v="400" data-dod="0.8" data-eff="0.92" data-chg="5000" data-dis="11500">Tesla Powerwall 3 · 13.5 kWh</option>
                 <option data-cap="15564.8" data-unit="Wh" data-v="51.2" data-dod="0.9" data-eff="0.95" data-chg="10240" data-dis="10240">Fogstar Energy wall mount · 15.5 kWh</option>
@@ -290,26 +296,24 @@
             </select>
           </div></div>
         <details class="adv" id="advBatt"><summary>Advanced</summary>
-        <div class="ctl wide"><label for="battCap">Battery capacity</label>
+        <div class="ctl wide"><span class="pophost"><label for="battCap">Battery capacity</label><div class="pop" id="battCapPop" role="tooltip"><b>Battery capacity</b><br>Rated capacity of one unit, in whichever unit suits it. The simulation works in amp-hours times volts, so mAh, Ah and Wh describe the same battery; switching the unit converts the number rather than changing the battery.</div></span>
           <div class="row"><input type="number" id="battCap" min="0" step="any" style="width:100px"><select id="battCapUnit"><option>mAh</option><option>Ah</option><option>Wh</option></select><span class="hint" id="battEquiv"></span></div></div>
-        <div class="ctl wide"><label for="battV">Battery voltage</label>
+        <div class="ctl wide"><span class="pophost"><label for="battV">Battery voltage</label><div class="pop" id="battVPop" role="tooltip"><b>Battery voltage</b><br>Nominal pack voltage: 12 V for leisure batteries, 48 V (51.2 V) for home storage, 400 V for high-voltage home and car packs. With capacity in amp-hours it sets the energy; with capacity in watt-hours it only sets the currents.</div></span>
           <div class="row"><input type="number" id="battV" min="0.1" step="any" style="width:100px"> V
             <span id="vChips"><button class="chip" data-v="1.2" title="1S NiMH">1.2 V</button><button class="chip" data-v="3.2" title="1S LiFePO4">3.2 V</button><button class="chip" data-v="3.7" title="1S Li-ion">3.7 V</button><button class="chip" data-v="12">12 V</button><button class="chip" data-v="24">24 V</button><button class="chip" data-v="48">48 V</button><button class="chip" data-v="400">400 V</button><button class="chip" data-v="800" title="800 V EV packs such as Hyundai E-GMP">800 V</button></span></div></div>
-        <div class="ctl wide"><label for="battChg">Charge limit</label><div class="row"><input type="text" id="battChg" style="width:170px" placeholder="200 mA at 4 V, 0.8 W, 3 kW"><span class="hint" id="battChgNote"></span></div></div>
-        <div class="ctl wide"><label for="battDis">Discharge limit</label><div class="row"><input type="text" id="battDis" style="width:170px" placeholder="0.8 W or 3 kW"><span class="hint" id="battDisNote"></span></div></div>
-        <div class="ctl"><label for="dod">Usable depth</label>
-          <div class="slwrap"><input type="range" id="dod" min="0.2" max="1" step="0.05" aria-describedby="dodPop">
-            <div class="pop" id="dodPop" role="tooltip"><b>Usable depth of discharge</b><br>How much of the rated capacity the system may draw before it stops supplying the load. The rest is never touched, which protects the battery from deep discharge.
-              <span class="dim">The state-of-charge chart shows the usable part, so 0 % there means the reserve is spent, not that the cells are flat. LiFePO₄ 80–90 %, Li-ion about 80 %, lead-acid 50 %.</span></div></div>
+        <div class="ctl wide"><span class="pophost"><label for="battChg">Charge limit</label><div class="pop" id="battChgPop" role="tooltip"><b>Charge limit</b><br>The fastest the battery will take power in, usually set by its BMS or charger. Accepts '3 kW', '0.8 W' or '200 mA at 4 V'. Left alone it is 0.5C: half the pack's capacity every hour.</div></span><div class="row"><input type="text" id="battChg" style="width:170px" placeholder="200 mA at 4 V, 0.8 W, 3 kW"><span class="hint" id="battChgNote"></span></div></div>
+        <div class="ctl wide"><span class="pophost"><label for="battDis">Discharge limit</label><div class="pop" id="battDisPop" role="tooltip"><b>Discharge limit</b><br>The fastest the battery will give power out, usually set by the inverter. Same formats as the charge limit, and left alone it is also 0.5C.</div></span><div class="row"><input type="text" id="battDis" style="width:170px" placeholder="0.8 W or 3 kW"><span class="hint" id="battDisNote"></span></div></div>
+        <div class="ctl"><span class="pophost"><label for="dod">Usable depth</label><div class="pop" id="dodPop" role="tooltip"><b>Usable depth of discharge</b><br>How much of the rated capacity the system may draw before it stops supplying the load. The rest is never touched, which protects the battery from deep discharge.
+              <span class="dim">The state-of-charge chart shows the usable part, so 0 % there means the reserve is spent, not that the cells are flat. LiFePO₄ 80–90 %, Li-ion about 80 %, lead-acid 50 %.</span></div></span>
+          <div class="slwrap"><input type="range" id="dod" min="0.2" max="1" step="0.05" aria-describedby="dodPop"></div>
           <output id="dodOut"></output></div>
         <div class="pills" data-for="dod"><button class="chip" data-v="0.5">Lead-acid 50 %</button><button class="chip" data-v="0.8">Li-ion 80 %</button><button class="chip" data-v="0.8">NiMH 80 %</button><button class="chip" data-v="0.9">LiFePO₄ 90 %</button></div>
-        <div class="ctl"><label for="battEff">Round-trip efficiency</label>
-          <div class="slwrap"><input type="range" id="battEff" min="0.5" max="1" step="0.01" aria-describedby="battEffPop">
-            <div class="pop" id="battEffPop" role="tooltip"><b>Round-trip efficiency</b><br>Extra loss for energy that goes through the battery instead of straight to the load: cell chemistry plus the charge and discharge electronics. Applied half on the way in and half on the way out.
-              <span class="dim">Do not include the inverter here if it is already in the performance ratio. Lithium cells 90–95 %, lead-acid about 80 %.</span></div></div>
+        <div class="ctl"><span class="pophost"><label for="battEff">Round-trip efficiency</label><div class="pop" id="battEffPop" role="tooltip"><b>Round-trip efficiency</b><br>Extra loss for energy that goes through the battery instead of straight to the load: cell chemistry plus the charge and discharge electronics. Applied half on the way in and half on the way out.
+              <span class="dim">Do not include the inverter here if it is already in the performance ratio. Lithium cells 90–95 %, lead-acid about 80 %.</span></div></span>
+          <div class="slwrap"><input type="range" id="battEff" min="0.5" max="1" step="0.01" aria-describedby="battEffPop"></div>
           <output id="battEffOut"></output></div>
         <div class="pills" data-for="battEff"><button class="chip" data-v="0.7">NiMH 70 %</button><button class="chip" data-v="0.8">Lead-acid 80 %</button><button class="chip" data-v="0.92">Li-ion 92 %</button><button class="chip" data-v="0.95">LiFePO₄ 95 %</button></div>
-        <div class="ctl wide"><label for="battDeg">Capacity fade</label>
+        <div class="ctl wide"><span class="pophost"><label for="battDeg">Capacity fade</label><div class="pop" id="battDegPop" role="tooltip"><b>Capacity fade</b><br>Usable capacity the battery loses each year, compounding. Typical LiFePO₄ home storage is 1–3 % and warranties imply about 3.5 %. Only the cost section uses it: the lifetime savings, payback and return run on a smaller battery every year. 0 turns it off.</div></span>
           <div class="row"><input type="number" id="battDeg" min="0" max="10" step="0.1" style="width:80px"> % per year <span class="hint" id="battDegNote"></span></div></div>
         </details>
       </div>
@@ -353,9 +357,15 @@
           <label>Average draw <input type="text" id="loadAll" style="width:170px" placeholder="45 mW, 12 mA at 3.7 V, or 60"> <span id="loadAllUnit" class="unit-cycle" title="Click to change unit (µW, mW, W, kW, MW, GW)"></span></label>
           <button id="loadAllBtn" title="Set every hour to this value">Flatten</button>
           <span class="hint" id="loadAllNote"></span>
-          <label style="margin-left:auto" title="Yearly consumption of this profile. Type the figure from an energy bill to scale the profile to match.">Annual use <input type="text" id="loadYear" style="width:90px"> <span id="loadYearUnit"></span></label>
+          <label style="margin-left:auto" title="Yearly consumption, including any heating set under Advanced. Type the figure from an energy bill to scale everything to match.">Annual use <input type="text" id="loadYear" style="width:90px"> <span id="loadYearUnit"></span></label>
         </div>
-        <div class="row"><span class="hint">Editing the average or the annual use scales the whole profile; Flatten makes every hour equal.</span></div>
+        <div class="row"><span class="hint">Editing the average scales the profile, and the annual use scales it together with any heating under Advanced; Flatten makes every hour equal.</span></div>
+        <details class="adv" id="advUsage"><summary>Advanced</summary>
+          <div class="ctl wide"><span class="pophost"><label for="useElec">Electricity</label><div class="pop" id="useElecPop" role="tooltip"><b>Electricity</b><br>Everything except heating: the yearly energy of the daily profile above, which repeats on every day of the year. Changing it scales the profile.</div></span>
+            <div class="row"><input type="text" id="useElec" style="width:90px"> <span class="useUnit"></span></div></div>
+          <div class="ctl wide"><span class="pophost"><label for="useHeat">Heating</label><div class="pop" id="useHeatPop" role="tooltip"></div></span>
+            <div class="row"><input type="text" id="useHeat" style="width:90px"> <span class="useUnit"></span> <span class="hint" id="heatNote"></span></div></div>
+        </details>
       </div>
       <div class="tiles">
         <div class="tile hero"><div class="label">Days fully powered</div><div class="value"><span id="simDays">–</span><small>of 365</small></div></div>
@@ -395,14 +405,14 @@
         <div class="tile"><div class="label">Net after horizon</div><div class="value"><span id="cNet">–</span></div><div class="hint" id="cNetNote"></div></div>
       </div>
       <details class="battery adv" id="advCost"><summary>Advanced</summary>
-        <div class="ctl wide"><label for="solarCost">Solar cost</label><div class="row"><span class="cur">£</span> <input type="number" id="solarCost" min="0" step="100" style="width:110px"><span class="hint" id="solarCostNote"></span></div></div>
-        <div class="ctl wide"><label for="battCost">Battery cost</label><div class="row"><span class="cur">£</span> <input type="number" id="battCost" min="0" step="100" style="width:110px"><span class="hint" id="battCostNote"></span></div></div>
-        <div class="ctl wide"><label for="gridCharge">Grid charging</label><div class="row"><label><input type="checkbox" id="gridCharge"> Charge the battery from the grid when the import price is at or below</label><input type="number" id="cheapBelow" min="0" step="0.5" style="width:80px"> <span class="sub">p</span>/kWh <span class="hint" id="gridNote"></span></div></div>
+        <div class="ctl wide"><span class="pophost"><label for="solarCost">Solar cost</label><div class="pop" id="solarCostPop" role="tooltip"><b>Solar cost</b><br>What the panels cost fitted. Left alone it is £1,700 per kWp, close to the MCS average across UK domestic installs, with quotes running £1,500–1,800. Type your own quote over it.</div></span><div class="row"><span class="cur">£</span> <input type="number" id="solarCost" min="0" step="100" style="width:110px"><span class="hint" id="solarCostNote"></span></div></div>
+        <div class="ctl wide"><span class="pophost"><label for="battCost">Battery cost</label><div class="pop" id="battCostPop" role="tooltip"><b>Battery cost</b><br>What the storage costs fitted. Left alone it is £450 per kWh. Retrofitting to an existing system usually costs more per kWh than fitting it alongside the panels, so type your own quote over it.</div></span><div class="row"><span class="cur">£</span> <input type="number" id="battCost" min="0" step="100" style="width:110px"><span class="hint" id="battCostNote"></span></div></div>
+        <div class="ctl wide"><span class="pophost"><label for="gridCharge">Grid charging</label><div class="pop" id="gridChargePop" role="tooltip"><b>Grid charging</b><br>Buy grid electricity while it is cheap and keep it for the expensive hours. The threshold is drawn across the import prices as a dashed line with the qualifying hours in blue, and the handle on that line drags it up and down.</div></span><div class="row"><label><input type="checkbox" id="gridCharge"> Charge the battery from the grid when the import price is at or below</label><input type="number" id="cheapBelow" min="0" step="0.5" style="width:80px"> <span class="sub">p</span>/kWh <span class="hint" id="gridNote"></span></div></div>
         <div class="ctl wide" id="gridSmartRow"><label></label><div class="row"><label title="In each cheap window, charge only as much as the battery needs, together with the coming solar, to last until the next cheap window. Assumes the day's solar and usage are known in advance."><input type="checkbox" id="gridSmart"> Only top up what the day ahead needs</label>, keeping at least <input type="number" id="gridSmartMin" min="0" max="50" step="1" style="width:60px" title="Safety margin: the planned lowest charge before the next cheap window, as a share of the usable battery"> % spare <span class="hint" id="gridSmartNote"></span></div></div>
-        <div class="ctl wide"><label for="expLimit">Export limit</label><div class="row"><input type="number" id="expLimit" min="0" max="100" step="0.01" style="width:90px"> kW <span class="hint" id="expLimitNote"></span></div></div>
-        <div class="ctl wide"><label for="standing">Standing charge</label><div class="row"><input type="number" id="standing" min="0" step="0.5" style="width:90px"> <span class="sub">p</span> per day <span class="hint">the fixed daily charge on the bill; import presets fill it in</span></div></div>
-        <div class="ctl wide"><label for="inflation">Price inflation</label><div class="row"><input type="number" id="inflation" min="-10" max="30" step="0.5" style="width:80px"> % per year <span class="hint">applied to both import and export prices</span></div></div>
-        <div class="ctl wide"><label for="horizon">Horizon</label><div class="row"><input type="number" id="horizon" min="1" max="40" step="1" style="width:80px"> years <span class="hint">system life for the cash-flow chart; battery capacity fade and panel output fade are modelled, each under Advanced in its own section, but replacement is not</span></div></div>
+        <div class="ctl wide"><span class="pophost"><label for="expLimit">Export limit</label><div class="pop" id="expLimitPop" role="tooltip"><b>Export limit</b><br>The most the grid will take. Surplus above it is thrown away, after the battery has taken what it can. UK G98 allows 3.68 kW on a single phase and 11.04 kW on three; more than that needs G99 approval from the network operator. 0 for no limit.</div></span><div class="row"><input type="number" id="expLimit" min="0" max="100" step="0.01" style="width:90px"> kW <span class="hint" id="expLimitNote"></span></div></div>
+        <div class="ctl wide"><span class="pophost"><label for="standing">Standing charge</label><div class="pop" id="standingPop" role="tooltip"><b>Standing charge</b><br>The fixed daily charge on the bill, paid whatever you use. Import presets fill it in. It falls due with or without a system, so it changes the bills but not the saving between them.</div></span><div class="row"><input type="number" id="standing" min="0" step="0.5" style="width:90px"> <span class="sub">p</span> per day <span class="hint">the fixed daily charge on the bill; import presets fill it in</span></div></div>
+        <div class="ctl wide"><span class="pophost"><label for="inflation">Price inflation</label><div class="pop" id="inflationPop" role="tooltip"><b>Price inflation</b><br>How fast energy prices rise each year, applied to import and export alike. It compounds, so it mostly lifts the later years of the cash-flow chart.</div></span><div class="row"><input type="number" id="inflation" min="-10" max="30" step="0.5" style="width:80px"> % per year <span class="hint">applied to both import and export prices</span></div></div>
+        <div class="ctl wide"><span class="pophost"><label for="horizon">Horizon</label><div class="pop" id="horizonPop" role="tooltip"><b>Horizon</b><br>How many years the cash flow runs for, and the span behind the payback, return and net figures. Battery capacity fade and panel output fade are modelled across it; replacing either is not.</div></span><div class="row"><input type="number" id="horizon" min="1" max="40" step="1" style="width:80px"> years <span class="hint">system life for the cash-flow chart; battery capacity fade and panel output fade are modelled, each under Advanced in its own section, but replacement is not</span></div></div>
       </details>
     </div>
     <div class="simcharts">
@@ -435,7 +445,7 @@
     loadW: [300, 250, 250, 250, 250, 300, 600, 800, 500, 400, 400, 450, 500, 400, 400, 450, 600, 1000, 1400, 1300, 1000, 700, 500, 350], loadUnit: 3,
     noBatt: false, noSolar: false, battN: 1, battCap: 200, battCapUnit: 'Ah', battV: 48, dod: 0.8, battEff: 0.9, battDeg: 2, battPick: '', loadPick: '',
     priceImp: new Array(24).fill(25), priceExp: new Array(24).fill(15), solarCost: null, battCost: null, battChargeW: null, battDischargeW: null,
-    gridCharge: false, gridSmart: false, gridSmartMin: 10, noExport: false, expLimit: 3.68, cheapBelow: 10, standing: 54, impPick: '', expPick: '', inflation: 3, horizon: 25, currency: 0 };
+    heatKwh: 0, gridCharge: false, gridSmart: false, gridSmartMin: 10, noExport: false, expLimit: 3.68, cheapBelow: 10, standing: 54, impPick: '', expPick: '', inflation: 3, horizon: 25, currency: 0 };
   let state = Object.assign({}, defaults);
   const sizeUnit = () => SIZE_UNITS[state.sizeUnit] || SIZE_UNITS[1];
   const loadUnit = () => LOAD_UNITS[state.loadUnit] || LOAD_UNITS[2];
@@ -459,7 +469,7 @@
     p.set('size', +(state.kwp / su.f).toPrecision(6) + su.u);
     p.set('eff', state.pr); p.set('clear', state.clear); if (!state.clearAuto) p.set('manual', '1');
     p.set('alb', state.albedo); p.set('pdeg', state.pvDeg); if (state.layer === 'Satellite') p.set('sat', '1');
-    p.set('draw', state.loadW.map((w) => +w.toPrecision(4)).join(',')); p.set('du', loadUnit().u.replace('µ', 'u'));
+    p.set('draw', state.loadW.map((w) => +w.toPrecision(4)).join(',')); p.set('du', loadUnit().u.replace('µ', 'u')); if (state.heatKwh > 0) p.set('heat', +state.heatKwh.toPrecision(5));
     p.set('batt', +state.battCap.toPrecision(5) + state.battCapUnit); p.set('v', state.battV); if (state.battN > 1) p.set('bn', state.battN); if (state.noBatt) p.set('nb', '1'); if (state.noSolar) p.set('ns', '1');
     p.set('dod', state.dod); p.set('beff', state.battEff); p.set('deg', state.battDeg);
     p.set('pi', state.priceImp.map((v) => +v.toFixed(2)).join(',')); p.set('pe', state.priceExp.map((v) => +v.toFixed(2)).join(','));
@@ -480,6 +490,7 @@
     const draw = (p.get('draw') || '').split(',').map(Number);
     if (draw.length === 24 && draw.every((v) => isFinite(v) && v >= 0)) state.loadW = draw;
     const du = LOAD_UNITS.findIndex((u) => u.u.replace('µ', 'u') === p.get('du')); if (du >= 0) state.loadUnit = du;
+    state.heatKwh = num('heat', 0, 1e9) || 0;
     state.battN = Math.max(1, Math.round(num('bn', 1, 1e6) || 1)); state.noBatt = p.has('nb'); state.noSolar = p.has('ns');
     const batt = (p.get('batt') || '').match(/^([\d.]+)(mAh|Ah|Wh)$/);
     if (batt) { state.battCap = parseFloat(batt[1]); state.battCapUnit = batt[2]; }
@@ -749,7 +760,7 @@
     return { months, avg: Math.round(Math.min(1, Math.max(0.3, num / den)) * 100) / 100 };
   }
   let climateReq = null, climateTimer = null;
-  function climateMatches() { const c = state.climate; return !!c && Math.abs(c.lat - state.lat) < 1e-4 && Math.abs(c.lon - state.lon) < 1e-4; }
+  function climateMatches() { const c = state.climate; return !!c && 'temp' in c && Math.abs(c.lat - state.lat) < 1e-4 && Math.abs(c.lon - state.lon) < 1e-4; }   // climates saved before temperatures were fetched are fetched again
   function fetchClimate() {
     clearTimeout(climateTimer);
     climateTimer = setTimeout(async () => {
@@ -758,13 +769,16 @@
       const lat = state.lat, lon = state.lon;
       $('climateNote').textContent = 'Fetching site climate from NASA POWER…';
       try {
-        const url = 'https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&format=JSON&latitude=' + lat.toFixed(4) + '&longitude=' + lon.toFixed(4);
+        const url = 'https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN,T2M,T2M_MAX,T2M_MIN&community=RE&format=JSON&latitude=' + lat.toFixed(4) + '&longitude=' + lon.toFixed(4);
         const j = await (await fetch(url, { signal: ctrl.signal })).json();
-        const p = j.properties.parameter.ALLSKY_SFC_SW_DWN;
-        const nasa = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'].map((k) => p[k]);
+        const par = j.properties.parameter, p = par.ALLSKY_SFC_SW_DWN, MK = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+        const nasa = MK.map((k) => p[k]);
         if (nasa.some((v) => !(v >= 0))) throw new Error('no data');
         const c = deriveClimate(lat, nasa);
-        state.climate = { lat, lon, months: c.months, avg: c.avg, ghi: Math.round(p.ANN * 365) };
+        // monthly mean, mean daily high and mean daily low air temperature at 2 m, for spreading heating over the year
+        const tm = (k) => par[k] ? MK.map((m) => par[k][m]) : null, t = tm('T2M'), tx = tm('T2M_MAX'), tn = tm('T2M_MIN');
+        const temp = [t, tx, tn].every((a) => a && a.every((v) => v > -90)) ? { mean: t, max: tx, min: tn } : null;   // NASA marks missing data -999
+        state.climate = { lat, lon, months: c.months, avg: c.avg, ghi: Math.round(p.ANN * 365), temp };
         if (state.clearAuto) setClear(c.avg, true); else { save(); recomputeGrid(); updateOutputs(); updateClearMark(); }
       } catch (e) {
         if (ctrl.signal.aborted) return;
@@ -803,6 +817,72 @@
       (state.clearAuto ? '' : '<br><button type="button" id="clearReset2">Reset to site estimate</button>');
     for (const id of ['clearReset', 'clearReset2']) { const r = $(id); if (r) r.addEventListener('click', () => setClear(c.avg, true)); }
   }
+  // ---------- heating (heat pump) ----------
+  // The yearly heating electricity is spread over every hour of the year in proportion to how far the outdoor
+  // temperature sits below the heating base, divided by the heat pump's efficiency at that temperature: a cold
+  // hour needs more heat, and each unit of heat costs more electricity to make.
+  const HEAT_BASE = 15.5;   // °C, the UK base temperature: below it a typical home needs heating
+  // Expected degrees below the base when the climatological temperature is t, allowing for the weather scattering
+  // around it, so a mild month still carries some cold spells (Hitchin's formula, CIBSE TM41, k = 0.71 per K).
+  const degBelow = (t) => { const d = HEAT_BASE - t; return Math.abs(d) < 1e-6 ? 1 / 0.71 : d / (1 - Math.exp(-0.71 * d)); };
+  const copAt = (t) => Math.max(1.5, 3.2 + 0.07 * (t - 5));   // air-source heat pump: about 2.5 at -5 °C, 3.2 at 5 °C, 3.7 at 12 °C
+  // Monthly temperatures: the site's from NASA POWER, or a rough guess from the latitude when none could be fetched.
+  function siteTemps() {
+    const c = climateMatches() ? state.climate : null;
+    if (c && c.temp) return { t: c.temp, site: true };
+    const a = Math.abs(state.lat), mean = 30 - 0.35 * a, swing = 0.15 * a, south = state.lat < 0;
+    const t = { mean: [], max: [], min: [] };
+    for (let m = 0; m < 12; m++) {
+      const v = mean - swing * Math.cos(2 * Math.PI * (m + (south ? 6 : 0)) / 12);   // coldest in January in the north, July in the south
+      t.mean.push(v); t.max.push(v + 4); t.min.push(v - 4);
+    }
+    return { t, site: false };
+  }
+  let heatCache = { key: '', kw: null, months: null };
+  // Heating electricity in kW for every hour of every day of the year (null when there is none), plus the kWh in each month.
+  function heatProfile() {
+    if (!(state.heatKwh > 0)) return { kw: null, months: new Array(12).fill(0) };
+    const { t } = siteTemps(), key = JSON.stringify([state.heatKwh, t]);
+    if (heatCache.key === key) return heatCache;
+    // Monthly values sit at mid-month and are interpolated in between, wrapping round the year.
+    const mid = DAYS.map((d, m) => DAYS.slice(0, m).reduce((a, b) => a + b, 0) + d / 2);
+    const interp = (arr, x) => {
+      let i = mid.findIndex((v) => v > x); if (i < 0) i = 12;
+      const i0 = (i + 11) % 12, i1 = i % 12, x0 = i === 0 ? mid[11] - 365 : mid[i - 1], x1 = i === 12 ? mid[0] + 365 : mid[i];
+      return arr[i0] + (arr[i1] - arr[i0]) * (x - x0) / (x1 - x0);
+    };
+    const kw = new Array(365); let total = 0;
+    for (let n = 0; n < 365; n++) {
+      const x = n + 0.5, tMean = interp(t.mean, x), amp = (interp(t.max, x) - interp(t.min, x)) / 2, day = new Float64Array(24);
+      for (let h = 0; h < 24; h++) {
+        const tH = tMean + amp * Math.cos(2 * Math.PI * (h + 0.5 - 15) / 24);   // warmest mid-afternoon, coldest before dawn
+        day[h] = degBelow(tH) / copAt(tH); total += day[h];
+      }
+      kw[n] = day;
+    }
+    const f = total > 0 ? state.heatKwh / total : 0, months = new Array(12).fill(0);
+    for (let n = 0; n < 365; n++) { const m = new Date(2025, 0, n + 1).getMonth(); for (let h = 0; h < 24; h++) { kw[n][h] *= f; months[m] += kw[n][h]; } }
+    heatCache = { key, kw, months };
+    return heatCache;
+  }
+  function updateHeatUI() {
+    const { t, site } = siteTemps(), H = heatProfile(), pop = $('useHeatPop'), note = $('heatNote');
+    const lo = Math.min(...t.mean), hi = Math.max(...t.mean), c1 = (v) => (Math.round(v * 10) / 10) + ' °C';
+    const src = site ? 'NASA POWER 2001–2020 monthly temperature climatology for this point'
+      : 'a rough estimate from the latitude, as no site temperatures could be fetched';
+    let bars = '';
+    if (state.heatKwh > 0) {
+      const mx = Math.max(...H.months);
+      bars = '<div class="bars">' + H.months.map((v, m) => '<i style="height:' + Math.round(v / mx * 100) + '%" title="' + MONTHS[m] + ': ' + fmtNum(v) + ' kWh"></i>').join('') + '</div>' +
+        '<div class="months"><span>Jan</span><span>Dec</span></div>';
+      const top = H.months.indexOf(mx), low = H.months.indexOf(Math.min(...H.months));
+      note.textContent = 'most in ' + MONTHS[top] + ' (' + fmtNum(H.months[top]) + ' kWh), least in ' + MONTHS[low] + ' (' + fmtNum(H.months[low]) + ' kWh)';
+    } else note.textContent = 'a heat pump’s yearly electricity; 0 for none';
+    pop.innerHTML = '<b>Heating</b><br>Electricity a heat pump uses in a year, from its meter or the installer’s estimate. ' +
+      'It is spread over the year by how far each hour falls below ' + HEAT_BASE + ' °C, and a cold hour costs extra because the pump runs less efficiently in the cold.' +
+      bars + '<span class="dim">Monthly mean temperatures ' + c1(lo) + ' to ' + c1(hi) + ', from ' + src + '. Each day runs coldest before dawn, so heating leans towards the night.</span>';
+  }
+
   $('optBtn').addEventListener('click', () => setOrientation(opt.tilt, opt.az));
   function setOrientation(t, a) {
     state.tilt = t; state.az = a; save();
@@ -1152,9 +1232,12 @@
     const LU = loadUnit(), vals = state.loadW.map((w) => w / LU.f);
     $('loadUnitSel').value = state.loadUnit; $('loadAllUnit').textContent = LU.u;
     if (forceField || document.activeElement !== $('loadAll')) { $('loadAll').value = plain(vals.reduce((a, b) => a + b, 0) / 24); $('loadAllNote').textContent = ''; }
-    const yearWh = state.loadW.reduce((a, b) => a + b, 0) / 24 * 8760, yi = whIdx(yearWh);
-    if (forceField || document.activeElement !== $('loadYear')) $('loadYear').value = plain(yearWh / whDiv(yi));
+    const elecWh = state.loadW.reduce((a, b) => a + b, 0) / 24 * 8760, heatWh = state.heatKwh * 1000, yearWh = elecWh + heatWh, yi = whIdx(yearWh);
+    for (const [id, wh] of [['loadYear', yearWh], ['useElec', elecWh], ['useHeat', heatWh]])
+      if (forceField || document.activeElement !== $(id)) $(id).value = plain(wh / whDiv(yi));
     $('loadYearUnit').textContent = WH_UNITS[yi];
+    document.querySelectorAll('.useUnit').forEach((s) => { s.textContent = WH_UNITS[yi]; });
+    updateHeatUI();
     lmax = painting ? strokeMax : niceCeil(Math.max(...vals) * 1.25);
     lctx.font = '11px ' + css('--sans'); lctx.textAlign = 'right'; lctx.textBaseline = 'middle';
     for (let i = 0; i <= 4; i++) {
@@ -1215,15 +1298,27 @@
   }
   $('loadAll').addEventListener('focus', () => { shapeRef = state.loadW.slice(); });
   $('loadAll').addEventListener('input', () => { const r = previewSpec(); if (r && r.w > 0) scaleProfileTo(r.w); });
-  // Annual use: the same scaling, driven by a yearly energy figure such as the one on a bill.
-  $('loadYear').addEventListener('focus', () => { shapeRef = state.loadW.slice(); });
+  // Annual use: the same scaling, driven by a yearly energy figure such as the one on a bill. It covers heating too,
+  // so the electricity and heating split under Advanced keeps its proportions.
+  let heatRef = 0;
+  const yearWhIn = (id) => { const v = parseFloat(String($(id).value).replace(/,/g, '')); return v >= 0 ? v * whDiv(WH_UNITS.indexOf($('loadYearUnit').textContent)) : null; };
+  $('loadYear').addEventListener('focus', () => { shapeRef = state.loadW.slice(); heatRef = state.heatKwh; });
   $('loadYear').addEventListener('input', () => {
-    const v = parseFloat(String($('loadYear').value).replace(/,/g, '')); if (!(v > 0)) return;
-    const unitWh = whDiv(WH_UNITS.indexOf($('loadYearUnit').textContent));
-    scaleProfileTo(v * unitWh / 8760);
+    const wh = yearWhIn('loadYear'); if (!(wh > 0)) return;
+    if (!shapeRef) { shapeRef = state.loadW.slice(); heatRef = state.heatKwh; }   // edited without a focus event
+    const elec0 = mean(shapeRef) * 8760, total0 = elec0 + heatRef * 1000;
+    if (!(total0 > 0)) { scaleProfileTo(wh / 8760); return; }
+    const f = wh / total0; state.heatKwh = +(heatRef * f).toPrecision(6);
+    scaleProfileTo(elec0 * f / 8760);
   });
-  $('loadYear').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('loadYear').blur(); });
-  $('loadYear').addEventListener('blur', () => { shapeRef = null; drawLoad(true); });
+  // Electricity alone scales the daily profile; heating alone is a yearly figure. Either one moves the annual use.
+  $('useElec').addEventListener('focus', () => { shapeRef = state.loadW.slice(); });
+  $('useElec').addEventListener('input', () => { const wh = yearWhIn('useElec'); if (wh > 0) scaleProfileTo(wh / 8760); });
+  $('useHeat').addEventListener('input', () => { const wh = yearWhIn('useHeat'); if (wh === null) return; state.heatKwh = +(wh / 1000).toPrecision(6); save(); drawLoad(); runSim(); });
+  for (const id of ['loadYear', 'useElec', 'useHeat']) {
+    $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') $(id).blur(); });
+    $(id).addEventListener('blur', () => { shapeRef = null; drawLoad(true); });
+  }
   $('loadAll').addEventListener('change', () => { const r = parseSpec($('loadAll').value); if (r && r.w > 0) { pickUnitFor(r.w); save(); } drawLoad(true); });
   $('loadAll').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('loadAll').blur(); });
   $('loadAll').addEventListener('blur', () => { shapeRef = null; drawLoad(true); });
@@ -1339,14 +1434,14 @@
 
   // Hour-by-hour simulation of a full year (run twice, the second pass is reported so January starts realistically).
   function simulate() {
-    const load = state.loadW.map((w) => w / 1000);                                // kW per hour of the day
+    const base = state.loadW.map((w) => w / 1000), heat = heatProfile().kw;          // kW per hour of the day, plus heating per hour of the year
     const capKwh = battAhTotal() * state.battV / 1000, usable = capKwh * state.dod, eta = Math.sqrt(state.battEff);
     const pc = chargeW() / 1000, pd = dischargeW() / 1000;   // kW limits from the charger and inverter
     const pv = hourlyPv();
     const months = Array.from({ length: 12 }, () => ({ pv: 0, load: 0, short: 0, curtailed: 0, outageHours: 0, outageDays: 0 }));
     let e = usable;
     for (let year = 0; year < 2; year++) for (let n = 0; n < 365; n++) {
-      const M = months[new Date(2025, 0, n + 1).getMonth()]; let dayOut = false;
+      const M = months[new Date(2025, 0, n + 1).getMonth()], load = heat ? base.map((b, h) => b + heat[n][h]) : base; let dayOut = false;
       for (let h = 0; h < 24; h++) {
         const net = pv[n][h] - load[h]; let short = 0, curt = 0;
         if (net >= 0) { const room = (usable - e) / eta, stored = Math.min(net, room, pc); e += stored * eta; curt = net - stored; }
@@ -1358,7 +1453,7 @@
       }
       if (year === 1 && dayOut) M.outageDays++;
     }
-    return { months, usable, capKwh, avgLoad: load.reduce((a, b) => a + b, 0) / 24 };
+    return { months, usable, capKwh, avgLoad: base.reduce((a, b) => a + b, 0) / 24 + state.heatKwh / 8760 };
   }
   const MONTH_STARTS = DAYS.reduce((a, d) => (a.push(a[a.length - 1] + d), a), [0]);
   const simMonthly = new Chart($('simMonthly'), {
@@ -1665,7 +1760,8 @@
   // cap, pvf: fractions of the battery and of the panel output still there, so a later year can be run on a
   // faded system (1 = new).
   function simulateCost(cap, pvf) {
-    const load = state.loadW.map((w) => w / 1000), pv = hourlyPv(), pvMul = pvf == null ? 1 : pvf;
+    const base = state.loadW.map((w) => w / 1000), heat = heatProfile().kw, pv = hourlyPv(), pvMul = pvf == null ? 1 : pvf;
+    const loadAt = (n, h) => heat ? base[h] + heat[n][h] : base[h];   // kW in hour h of day n, heating included
     const usable = capKwhTotal() * state.dod * (cap == null ? 1 : cap), eta = Math.sqrt(state.battEff), pc = chargeW() / 1000, pd = dischargeW() / 1000;   // all zero when there is no battery
     const imp = state.priceImp.map((p) => p / 100), exp = state.priceExp.map((p) => state.noExport ? 0 : p / 100);   // no export: surplus earns nothing
     // Most the grid will take in an hour. With no export at all the whole surplus is already reported as unused,
@@ -1680,7 +1776,7 @@
     function needAfter(n, h) {
       const steps = []; let k = h + 1;
       while (k < h + 24 && cheapH[k % 24]) k++;
-      for (; k < h + 25 && !cheapH[k % 24]; k++) { const hh = k % 24; steps.push(pv[(n + Math.floor(k / 24)) % 365][hh] * pvMul - load[hh]); }
+      for (; k < h + 25 && !cheapH[k % 24]; k++) { const hh = k % 24; const dn = (n + Math.floor(k / 24)) % 365; steps.push(pv[dn][hh] * pvMul - loadAt(dn, hh)); }
       const spare = usable * state.gridSmartMin / 100;   // planned lowest charge, so the forecast has some slack
       const lasts = (e0) => { let x = e0; for (const net of steps) { if (net >= 0) x = Math.min(usable, x + Math.min(net, pc) * eta); else { x -= Math.min(-net / eta, pd); if (x < spare - 1e-9) return false; } } return true; };
       if (lasts(0)) return 0; if (!lasts(usable)) return usable;
@@ -1693,7 +1789,7 @@
       if (trace) trace[0] = usable > 0 ? e / usable : 0;
       if (year === 1) M.stand += state.standing / 100;   // standing charge, per day
       for (let h = 0; h < 24; h++) {
-        const p = pv[n][h] * pvMul, l = load[h], net = p - l; let importKwh = 0, exportKwh = 0, curtKwh = 0, charged = 0, served = 0;
+        const p = pv[n][h] * pvMul, l = loadAt(n, h), net = p - l; let importKwh = 0, exportKwh = 0, curtKwh = 0, charged = 0, served = 0;
         const cheap = usable > 0 && state.gridCharge && state.priceImp[h] <= state.cheapBelow;   // a grid-charging hour
         if (net >= 0) {   // fill the battery first, then export what the connection allows; the rest is curtailed
           const stored = Math.min(net, (usable - e) / eta, pc); e += stored * eta; charged = stored;
@@ -1889,6 +1985,7 @@
   }
   // open the panel's Advanced section when it holds a non-default value, so a manual setting is never hidden
   if (Math.abs(state.pr - defaults.pr) > 0.005 || Math.abs(state.albedo - defaults.albedo) > 0.005 || !state.clearAuto) $('advPanel').open = true;
+  if (state.heatKwh > 0) $('advUsage').open = true;
   recomputeGrid();
   updateOutputs();
   updateClearMark();
